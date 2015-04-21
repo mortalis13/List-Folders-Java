@@ -1,0 +1,9 @@
+[folder1]
+  file1.txt
+  file2.txt
+  file3.txt
+[folder2]
+  file1.txt
+[folder3]
+file1.txt
+file2.txt
