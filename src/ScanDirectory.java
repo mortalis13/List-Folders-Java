@@ -98,19 +98,19 @@ public class ScanDirectory {
   }
 
   public void processData() {
-   jsonArray = fullScan(path, -1);
+    jsonArray = fullScan(path, -1);
 
-   if(textArray.size()==0){
-     text="No Data!";
-     return;
-   }
-   
-   text = join(textArray);
-   markup = join(markupArray);
+    if(textArray.size()==0){
+      text="No Data!";
+      return;
+    }
+    
+    text = join(textArray, "\n");
+    markup = join(markupArray, "\n");
 
-//    exportText();
-//    exportMarkup();
-//    exportTree();
+    if(doExportText) exportText();
+    if(doExportMarkup) exportMarkup();
+    if(doExportTree) exportTree();
   }
   
   public ArrayList<TreeNode> fullScan(String dir, int level) {
@@ -133,6 +133,12 @@ public class ScanDirectory {
       file = new File(item);
 
       if (file.isDirectory() == true) {
+        boolean passed=true;
+        if(filterDir.size()!=0 && level==-1){
+          passed=filterDirectory(value);                  // filter directories
+        }
+        if(!passed) continue;
+          
         String currentDir = "[" + value + "]";
 
         textArray.add(pad + currentDir);
@@ -192,14 +198,6 @@ public class ScanDirectory {
       resPad += pad;
     }
     return resPad;
-  }
-
-  public String join(ArrayList<String> array) {
-    String res = "";
-    for (String val : array) {
-      res += val + '\n';
-    }
-    return res;
   }
   
   private String replaceTemplate(String tmpl, String replacement, String text){
@@ -317,6 +315,21 @@ public class ScanDirectory {
     return icon;
   }
   
+  public String join(ArrayList<String> array, String separator) {
+    String res = "";
+    for(int i=0;i<array.size();i++){
+      if(i==array.size()-1)
+        separator="";
+      res += array.get(i) + separator;
+    }
+    return res;
+  }
+  
+  public boolean match(String regex, String text) {
+    Pattern pat=Pattern.compile(regex);
+    return pat.matcher(text).find();
+  }
+  
 // --------------------------------------------------- filters ---------------------------------------------------
   
   public ArrayList<String> getFilters(String filter) {
@@ -342,10 +355,6 @@ public class ScanDirectory {
       for(String ext:excludeExt){
         if(match("\\."+ext+"$",file))
           return false;
-        
-//        Pattern pat=Pattern.compile("\\."+ext+"$");
-//        if(pat.matcher(file).matches())
-//          return false;
       }
       return true;
     }
@@ -358,17 +367,31 @@ public class ScanDirectory {
     return false;
   }
   
-  public boolean match(String regex, String text) {
-    Pattern pat=Pattern.compile(regex);
-    return pat.matcher(text).matches();
-  }
-  
   public boolean filterDirectory(String dir) {
-    return true;
+    for(String filter:filterDir){
+      if(filter.equals(dir))
+        return true;
+    }
+    return false;
   }
   
   public String getFiltersText() {
-    String filters="";
+    String filterExtText="", excludeExtText="", filterDirText="", filters="";
+    
+    if(filterExt.size()!=0){
+      filterExtText=join(filterExt, ",");
+    }
+    if(excludeExt.size()!=0){
+      excludeExtText=join(excludeExt, ",");
+    }
+    if(filterDir.size()!=0){
+      filterDirText=join(filterDir, ",");
+    }
+    
+    filters="Files include ["+filterExtText+"]";
+    filters+=", Files exclude ["+excludeExtText+"]";
+    filters+=", Directories ["+filterDirText+"]";
+    
     return filters;
   }
   
@@ -443,8 +466,8 @@ public class ScanDirectory {
     doc=replaceTemplate("_Title_", "Directory: "+treeName, doc);
     doc=replaceTemplate("_FolderPath_", "Directory: "+path, doc);
     
-//    filters=getFiltersText();
-//    doc=replaceTemplate("_Filters_", "Filters: "+filters, doc);
+    filters=getFiltersText();
+    doc=replaceTemplate("_Filters_", "Filters: "+filters, doc);
     
     htmlFile=exportPath+exportDoc;
     jsonFile=jsonPath+exportJSON;

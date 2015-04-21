@@ -10,8 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import javax.swing.Action;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -19,9 +20,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -29,26 +30,32 @@ import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class ListFoldersMain {
 
   JFrame frame;
+  
+  JTextArea taFilterExt;
+  JTextArea taExcludeExt;
+  JTextArea taFilterDir;
   JTextArea taOutput;
+  
   JTextField tfPath;
   JTextField tfExportName;
+  
   JCheckBox chExportText;
   JCheckBox chExportMarkup;
   JCheckBox chExportTree;
-  JTextArea taExcludeExt;
-  JTextArea taFilterDir;
+  
+  public JScrollPane pFilterExtScroll;
+  public JScrollPane pExcludeExtScroll;
+  public JScrollPane pFilterDirScroll;
+  public JScrollPane pOutputScroll;
   
   static ListFoldersMain window;
   
   Database db;
   Functions fun;
-  private JTextArea taFilterExt;
 
   /**
    * Launch the application.
@@ -97,7 +104,7 @@ public class ListFoldersMain {
         fun.loadFields(window);
       }
     });
-    frame.setBounds(0, 0, 510, 600);
+    frame.setBounds(0, 0, 516, 600);
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     
     KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
@@ -124,6 +131,22 @@ public class ListFoldersMain {
       }
       
     });
+    
+    pFilterExtScroll = new JScrollPane();
+    // pFilterExtScroll.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    // pFilterExtScroll.setBorder(null);
+    
+    pExcludeExtScroll = new JScrollPane();
+    // pExcludeExtScroll.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    // pExcludeExtScroll.setBorder(null);
+    
+    pFilterDirScroll = new JScrollPane();
+    // pFilterDirScroll.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    // pFilterDirScroll.setBorder(null);
+    
+    pOutputScroll = new JScrollPane();
+    // pOutputScroll.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    // pOutputScroll.setBorder(null);
       
     JButton bScanDir = new JButton("Scan Directory");
     bScanDir.addKeyListener(new KeyAdapter() {
@@ -210,7 +233,11 @@ public class ListFoldersMain {
     pExports.setLayout(gl_pExports);
     
     taFilterExt = new JTextArea();
-    taFilterExt.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    
+    // taFilterExt.setBorder(null);
+    // taFilterExt.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    taFilterExt.setMargin(new Insets(5, 5, 5, 5));
+    
     taFilterExt.setLineWrap(true);
     
     taFilterExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -219,14 +246,22 @@ public class ListFoldersMain {
     
     taExcludeExt = new JTextArea();
     taExcludeExt.setLineWrap(true);
-    taExcludeExt.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    
+    // taExcludeExt.setBorder(null);
+    // taExcludeExt.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    taExcludeExt.setMargin(new Insets(5, 5, 5, 5));
+    
     taExcludeExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
     
     JLabel lExcludeExt = new JLabel("Exclude Extensions");
     
     taFilterDir = new JTextArea();
     taFilterDir.setLineWrap(true);
-    taFilterDir.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    
+    // taFilterDir.setBorder(null);
+    // taFilterDir.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    taFilterDir.setMargin(new Insets(5, 5, 5, 5));
+    
     taFilterDir.setFont(new Font("Monospaced", Font.PLAIN, 12));
     
     JLabel lFilterDir = new JLabel("Filter Directories");
@@ -237,15 +272,15 @@ public class ListFoldersMain {
     gl_pOptions.setHorizontalGroup(
       gl_pOptions.createSequentialGroup()
         .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
-          .addComponent(taFilterExt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+          .addComponent(pFilterExtScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
           .addComponent(lFilterExt, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addGap(15)
         .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
-          .addComponent(taExcludeExt)
+          .addComponent(pExcludeExtScroll)
           .addComponent(lExcludeExt, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
         .addGap(15)
         .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
-          .addComponent(taFilterDir, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(pFilterDirScroll, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(lFilterDir, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
         .addGap(15)
         .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING)
@@ -258,29 +293,34 @@ public class ListFoldersMain {
         .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
           .addComponent(lFilterExt)
           .addPreferredGap(ComponentPlacement.UNRELATED)
-          .addComponent(taFilterExt, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
+          .addComponent(pFilterExtScroll, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
         .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
           .addComponent(lExcludeExt)
           .addPreferredGap(ComponentPlacement.UNRELATED)
-          .addComponent(taExcludeExt, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
+          .addComponent(pExcludeExtScroll, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
         .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
           .addComponent(lFilterDir)
           .addPreferredGap(ComponentPlacement.UNRELATED)
-          .addComponent(taFilterDir, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
+          .addComponent(pFilterDirScroll, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
         .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
           .addComponent(lExportOptions)
           .addPreferredGap(ComponentPlacement.UNRELATED)
           .addComponent(pExports, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
     );
       
-    gl_pOptions.linkSize(SwingConstants.VERTICAL, new Component[] {taFilterExt, taExcludeExt, taFilterDir});
-    gl_pOptions.linkSize(SwingConstants.HORIZONTAL, new Component[] {taFilterExt, lFilterExt, lExcludeExt, lFilterDir});
+    // gl_pOptions.linkSize(SwingConstants.VERTICAL, new Component[] {taFilterExt, taExcludeExt, taFilterDir});
+    // gl_pOptions.linkSize(SwingConstants.HORIZONTAL, new Component[] {taFilterExt, lFilterExt, lExcludeExt, lFilterDir});
     pOptions.setLayout(gl_pOptions);
     
     taOutput = new JTextArea();
     taOutput.setLineWrap(true);
-    taOutput.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    
+    // taOutput.setBorder(null);
+    // taOutput.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    taOutput.setMargin(new Insets(5, 5, 5, 5));
+    
     taOutput.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    
     GroupLayout gl_pWrapper = new GroupLayout(pWrapper);
     gl_pWrapper.setHorizontalGroup(
       gl_pWrapper.createParallelGroup(Alignment.LEADING)
@@ -289,7 +329,7 @@ public class ListFoldersMain {
         .addComponent(lExportName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
         .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
         .addComponent(bScanDir, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
-        .addComponent(taOutput, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+        .addComponent(pOutputScroll, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
     );
     gl_pWrapper.setVerticalGroup(
       gl_pWrapper.createParallelGroup(Alignment.LEADING)
@@ -304,11 +344,16 @@ public class ListFoldersMain {
           .addGap(18)
           .addComponent(bScanDir, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
           .addGap(18)
-          .addComponent(taOutput, GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
+          .addComponent(pOutputScroll, GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
           .addContainerGap())
     );
     gl_pWrapper.setAutoCreateGaps(true);
     gl_pWrapper.setAutoCreateContainerGaps(true);
+    
+    pFilterExtScroll.setViewportView(taFilterExt);
+    pExcludeExtScroll.setViewportView(taExcludeExt);
+    pFilterDirScroll.setViewportView(taFilterDir);
+    pOutputScroll.setViewportView(taOutput);
     
     pWrapper.setLayout(gl_pWrapper);
     frame.getContentPane().setLayout(gl);
