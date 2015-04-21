@@ -1,39 +1,54 @@
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
-import javax.swing.JTextField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JTextPane;
-import javax.swing.JTextArea;
-import javax.swing.JList;
 import java.awt.Font;
+import java.awt.Insets;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import javax.swing.JRadioButton;
-import java.awt.GridLayout;
+
+import javax.swing.Action;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import java.awt.Component;
-import java.awt.Insets;
-import java.awt.Dimension;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class ListFoldersMain {
 
-  private JFrame frame;
-  private JTextArea taOutput;
-  private JTextField tfPath;
-  private JTextField tfExportName;
-  private final ButtonGroup buttonGroup = new ButtonGroup();
+  JFrame frame;
+  JTextArea taOutput;
+  JTextField tfPath;
+  JTextField tfExportName;
+  JTextArea taFilterExt;
+  JCheckBox chExportText;
+  JCheckBox chExportMarkup;
+  JCheckBox chExportTree;
+  JTextArea taExcludeExt;
+  JTextArea taFilterDir;
+  
+  static ListFoldersMain window;
+  
+  Database db;
+  Functions fun;
 
   /**
    * Launch the application.
@@ -42,7 +57,8 @@ public class ListFoldersMain {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         try {
-          ListFoldersMain window = new ListFoldersMain();
+          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());  
+          window = new ListFoldersMain();
           window.frame.setVisible(true);
         } catch (Exception e) {
           e.printStackTrace();
@@ -62,198 +78,239 @@ public class ListFoldersMain {
    * Initialize the contents of the frame.
    */
   private void initialize() {
+    db=new Database();
+    fun=new Functions();
+    
     frame = new JFrame();
-    frame.setBounds(100, 100, 620, 691);
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+//        db.updateConfig("last","123");
+      }
+      @Override
+      public void windowClosed(WindowEvent e) {
+        String value=fun.encodeJSON(fun.getFieldsMap(window));
+        db.updateConfig("last",value);
+      }
+      @Override
+      public void windowOpened(WindowEvent e) {
+        fun.loadFields(window);
+      }
+    });
+    frame.setBounds(0, 0, 510, 600);
+    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    
+    KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+    kfm.addKeyEventDispatcher( new KeyEventDispatcher() {
+      
+      @Override
+      public boolean dispatchKeyEvent(KeyEvent e) {
+//        KeyStroke key1 = KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.ALT_DOWN_MASK);
+//        KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
+        
+        if(e.getID()==KeyEvent.KEY_PRESSED && e.getKeyCode()==27){
+          SwingUtilities.invokeLater( new Runnable() {
+            @Override
+            public void run() {
+              frame.dispose();
+//              System.out.println("Esc");
+//              System.exit(0);
+            }
+          } );
+           
+          return true;
+        }
+        return false;
+      }
+      
+    });
+      
+    JButton bScanDir = new JButton("Scan Directory");
+    bScanDir.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == 27) {
+          System.exit(0);
+        }
+      }
+    });
+    bScanDir.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        String path;
+        
+        path = "C:/1-Roman/Documents/8-test/list-test";
+        ScanDirectory scandir = new ScanDirectory(window);
 
-    taOutput = new JTextArea();
-    taOutput.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        scandir.processData();
+        String text = scandir.text;
+
+        taOutput.setText(text);
+      }
+    });
+    
+    JPanel pWrapper = new JPanel();
+    GroupLayout gl = new GroupLayout(frame.getContentPane());
+    gl.setHorizontalGroup(
+      gl.createParallelGroup(Alignment.LEADING)
+        .addComponent(pWrapper, GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+    );
+    gl.setVerticalGroup(
+      gl.createParallelGroup(Alignment.LEADING)
+        .addComponent(pWrapper, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+    );
     
     tfPath = new JTextField();
+    tfPath.setText("C:/1-Roman/Documents/8-test/list-test");
+    tfPath.setMargin(new Insets(2, 5, 2, 2));
     tfPath.setColumns(10);
     
-        JButton bScanDir = new JButton("Scan Directory");
-        bScanDir.addKeyListener(new KeyAdapter() {
-          @Override
-          public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == 27) {
-              System.exit(0);
-            }
-          }
-        });
-        bScanDir.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            String path = "C:/1-Roman/Documents/8-test/list-test";
-            ScanDirectory scandir = new ScanDirectory();
-
-            scandir.processData(path);
-            String text = scandir.text;
-
-            taOutput.setText(text);
-          }
-        });
+    tfExportName = new JTextField();
+    tfExportName.setMargin(new Insets(2, 5, 2, 2));
+    tfExportName.setPreferredSize(new Dimension(150, 20));
     
-    JPanel pControls = new JPanel();
-    GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
-    groupLayout.setHorizontalGroup(
-      groupLayout.createParallelGroup(Alignment.TRAILING)
-        .addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
-          .addContainerGap()
-          .addComponent(bScanDir, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
-          .addContainerGap(475, Short.MAX_VALUE))
-        .addGroup(groupLayout.createSequentialGroup()
-          .addContainerGap()
-          .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-            .addComponent(taOutput, Alignment.LEADING)
-            .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
-              .addComponent(tfPath, Alignment.LEADING)
-              .addComponent(pControls, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 582, Short.MAX_VALUE)))
-          .addContainerGap())
+    JLabel lExportName = new JLabel("Export Name");
+    
+    JPanel pOptions = new JPanel();
+    
+    JPanel pExports = new JPanel();
+    
+    chExportText = new JCheckBox("Export Text");
+    chExportText.setMargin(new Insets(0, 0, 10, 0));
+    chExportText.setIconTextGap(5);
+    chExportText.setHorizontalAlignment(SwingConstants.LEFT);
+    
+    chExportMarkup = new JCheckBox("Export Markup");
+    chExportMarkup.setMargin(new Insets(0, 0, 10, 0));
+    chExportMarkup.setIconTextGap(5);
+    chExportMarkup.setHorizontalAlignment(SwingConstants.LEFT);
+    
+    chExportTree = new JCheckBox("Export Tree");
+    chExportTree.setMargin(new Insets(0, 0, 10, 0));
+    chExportTree.setIconTextGap(5);
+    chExportTree.setHorizontalAlignment(SwingConstants.LEFT);
+    GroupLayout gl_pExports = new GroupLayout(pExports);
+    
+    gl_pExports.setHorizontalGroup(
+      gl_pExports.createParallelGroup(Alignment.LEADING)
+        .addComponent(chExportText)
+        .addComponent(chExportMarkup)
+        .addComponent(chExportTree)
     );
-    groupLayout.setVerticalGroup(
-      groupLayout.createParallelGroup(Alignment.LEADING)
-        .addGroup(groupLayout.createSequentialGroup()
-          .addContainerGap()
-          .addComponent(tfPath, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+    
+    gl_pExports.setVerticalGroup(
+      gl_pExports.createSequentialGroup()
+        .addComponent(chExportText)
+        .addPreferredGap(ComponentPlacement.RELATED)
+        .addComponent(chExportMarkup)
+        .addPreferredGap(ComponentPlacement.RELATED)
+        .addComponent(chExportTree)
+    );
+    
+    gl_pExports.linkSize(SwingConstants.HORIZONTAL, new Component[] {chExportText, chExportMarkup, chExportTree});
+    pExports.setLayout(gl_pExports);
+    
+    taFilterExt = new JTextArea();
+    taFilterExt.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    taFilterExt.setLineWrap(true);
+    
+    taFilterExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    
+    JLabel lFilterExt = new JLabel("Filter Extensions");
+    
+    taExcludeExt = new JTextArea();
+    taExcludeExt.setLineWrap(true);
+    taExcludeExt.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    taExcludeExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    
+    JLabel lExcludeExt = new JLabel("Exclude Extensions");
+    
+    taFilterDir = new JTextArea();
+    taFilterDir.setLineWrap(true);
+    taFilterDir.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    taFilterDir.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    
+    JLabel lFilterDir = new JLabel("Filter Directories");
+    
+    JLabel lExportOptions = new JLabel("Export Options");
+    GroupLayout gl_pOptions = new GroupLayout(pOptions);
+    
+    gl_pOptions.setHorizontalGroup(
+      gl_pOptions.createSequentialGroup()
+        .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
+          .addComponent(taFilterExt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+          .addComponent(lFilterExt, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addGap(15)
+        .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
+          .addComponent(taExcludeExt)
+          .addComponent(lExcludeExt, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
+        .addGap(15)
+        .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
+          .addComponent(taFilterDir, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(lFilterDir, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
+        .addGap(15)
+        .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING)
+          .addComponent(pExports, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+          .addComponent(lExportOptions, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE))
+    );
+
+    gl_pOptions.setVerticalGroup(
+      gl_pOptions.createParallelGroup(Alignment.LEADING)
+        .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
+          .addComponent(lFilterExt)
+          .addPreferredGap(ComponentPlacement.UNRELATED)
+          .addComponent(taFilterExt, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
+        .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
+          .addComponent(lExcludeExt)
+          .addPreferredGap(ComponentPlacement.UNRELATED)
+          .addComponent(taExcludeExt, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
+        .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
+          .addComponent(lFilterDir)
+          .addPreferredGap(ComponentPlacement.UNRELATED)
+          .addComponent(taFilterDir, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
+        .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
+          .addComponent(lExportOptions)
+          .addPreferredGap(ComponentPlacement.UNRELATED)
+          .addComponent(pExports, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
+    );
+      
+    gl_pOptions.linkSize(SwingConstants.VERTICAL, new Component[] {taFilterExt, taExcludeExt, taFilterDir});
+    gl_pOptions.linkSize(SwingConstants.HORIZONTAL, new Component[] {taFilterExt, lFilterExt, lExcludeExt, lFilterDir});
+    pOptions.setLayout(gl_pOptions);
+    
+    taOutput = new JTextArea();
+    taOutput.setLineWrap(true);
+    taOutput.setBorder(new CompoundBorder(new LineBorder(new Color(180, 180, 180)), new EmptyBorder(5, 5, 5, 5)));
+    taOutput.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    GroupLayout gl_pWrapper = new GroupLayout(pWrapper);
+    gl_pWrapper.setHorizontalGroup(
+      gl_pWrapper.createParallelGroup(Alignment.LEADING)
+        .addComponent(tfPath, 0, 474, Short.MAX_VALUE)
+        .addComponent(pOptions, 0, 474, Short.MAX_VALUE)
+        .addComponent(lExportName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+        .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+        .addComponent(bScanDir, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
+        .addComponent(taOutput, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+    );
+    gl_pWrapper.setVerticalGroup(
+      gl_pWrapper.createParallelGroup(Alignment.LEADING)
+        .addGroup(gl_pWrapper.createSequentialGroup()
+          .addComponent(tfPath, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
           .addGap(18)
-          .addComponent(pControls, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+          .addComponent(pOptions, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+          .addGap(18)
+          .addComponent(lExportName)
+          .addGap(6)
+          .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
           .addGap(18)
           .addComponent(bScanDir, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
           .addGap(18)
-          .addComponent(taOutput, GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+          .addComponent(taOutput, GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
           .addContainerGap())
     );
-    groupLayout.setAutoCreateGaps(true);
-    groupLayout.setAutoCreateContainerGaps(true);
+    gl_pWrapper.setAutoCreateGaps(true);
+    gl_pWrapper.setAutoCreateContainerGaps(true);
     
-    tfExportName = new JTextField();
-    tfExportName.setColumns(10);
-    
-    JPanel pFilters = new JPanel();
-    
-    JTextArea taFilterExt = new JTextArea();
-    
-    JTextArea taExcludeExt = new JTextArea();
-    
-    JTextArea taFilterDir = new JTextArea();
-    taFilterDir.setMinimumSize(new Dimension(10, 16));
-    taFilterDir.setPreferredSize(new Dimension(10, 16));
-    
-    JPanel pExportOptions = new JPanel();
-    
-    JRadioButton rdbtnNewRadioButton = new JRadioButton("Export Text");
-    rdbtnNewRadioButton.setMargin(new Insets(0, 0, 10, 0));
-    rdbtnNewRadioButton.setIconTextGap(5);
-    rdbtnNewRadioButton.setHorizontalAlignment(SwingConstants.LEFT);
-    buttonGroup.add(rdbtnNewRadioButton);
-    
-    JRadioButton rdbtnNewRadioButton_1 = new JRadioButton("Export Markup");
-    rdbtnNewRadioButton_1.setMargin(new Insets(0, 0, 10, 0));
-    rdbtnNewRadioButton_1.setIconTextGap(5);
-    rdbtnNewRadioButton_1.setHorizontalAlignment(SwingConstants.LEFT);
-    buttonGroup.add(rdbtnNewRadioButton_1);
-    
-    JRadioButton rdbtnNewRadioButton_2 = new JRadioButton("Export Tree");
-    rdbtnNewRadioButton_2.setMargin(new Insets(0, 0, 10, 0));
-    rdbtnNewRadioButton_2.setIconTextGap(5);
-    rdbtnNewRadioButton_2.setHorizontalAlignment(SwingConstants.LEFT);
-    buttonGroup.add(rdbtnNewRadioButton_2);
-    
-    JLabel lblExportName = new JLabel("Export Name");
-    GroupLayout gl_pControls = new GroupLayout(pControls);
-    gl_pControls.setHorizontalGroup(
-      gl_pControls.createParallelGroup(Alignment.LEADING)
-        .addGroup(gl_pControls.createSequentialGroup()
-          .addGroup(gl_pControls.createParallelGroup(Alignment.LEADING)
-            .addGroup(gl_pControls.createSequentialGroup()
-              .addComponent(pFilters, GroupLayout.PREFERRED_SIZE, 448, GroupLayout.PREFERRED_SIZE)
-              .addPreferredGap(ComponentPlacement.UNRELATED)
-              .addComponent(pExportOptions, GroupLayout.PREFERRED_SIZE, 123, GroupLayout.PREFERRED_SIZE))
-            .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, 253, GroupLayout.PREFERRED_SIZE)
-            .addComponent(lblExportName, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
-          .addContainerGap(37, Short.MAX_VALUE))
-    );
-    gl_pControls.setVerticalGroup(
-      gl_pControls.createParallelGroup(Alignment.TRAILING)
-        .addGroup(gl_pControls.createSequentialGroup()
-          .addGroup(gl_pControls.createParallelGroup(Alignment.TRAILING, false)
-            .addComponent(pExportOptions, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-            .addComponent(pFilters, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-          .addPreferredGap(ComponentPlacement.RELATED)
-          .addComponent(lblExportName)
-          .addPreferredGap(ComponentPlacement.RELATED)
-          .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
-    );
-    
-    JLabel lblExportOptions = new JLabel("Export Options");
-    GroupLayout gl_pExportOptions = new GroupLayout(pExportOptions);
-    gl_pExportOptions.setHorizontalGroup(
-      gl_pExportOptions.createParallelGroup(Alignment.LEADING)
-        .addGroup(gl_pExportOptions.createSequentialGroup()
-          .addGroup(gl_pExportOptions.createParallelGroup(Alignment.LEADING)
-            .addComponent(lblExportOptions)
-            .addComponent(rdbtnNewRadioButton)
-            .addComponent(rdbtnNewRadioButton_1)
-            .addComponent(rdbtnNewRadioButton_2))
-          .addContainerGap(30, Short.MAX_VALUE))
-    );
-    gl_pExportOptions.setVerticalGroup(
-      gl_pExportOptions.createParallelGroup(Alignment.LEADING)
-        .addGroup(gl_pExportOptions.createSequentialGroup()
-          .addGap(1)
-          .addComponent(lblExportOptions)
-          .addPreferredGap(ComponentPlacement.UNRELATED)
-          .addComponent(rdbtnNewRadioButton)
-          .addPreferredGap(ComponentPlacement.RELATED)
-          .addComponent(rdbtnNewRadioButton_1)
-          .addPreferredGap(ComponentPlacement.RELATED)
-          .addComponent(rdbtnNewRadioButton_2)
-          .addContainerGap(73, Short.MAX_VALUE))
-    );
-    gl_pExportOptions.linkSize(SwingConstants.HORIZONTAL, new Component[] {rdbtnNewRadioButton, rdbtnNewRadioButton_1, rdbtnNewRadioButton_2});
-    pExportOptions.setLayout(gl_pExportOptions);
-    
-    JLabel lblFilterExtensions = new JLabel("Filter Extensions");
-    
-    JLabel lblExcludeExtensions = new JLabel("Exclude Extensions");
-    
-    JLabel lblFilterDirectories = new JLabel("Filter Directories");
-    GroupLayout gl_pFilters = new GroupLayout(pFilters);
-    gl_pFilters.setHorizontalGroup(
-      gl_pFilters.createParallelGroup(Alignment.LEADING)
-        .addGroup(gl_pFilters.createSequentialGroup()
-          .addGroup(gl_pFilters.createParallelGroup(Alignment.LEADING)
-            .addComponent(lblFilterExtensions)
-            .addComponent(taFilterExt, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE))
-          .addPreferredGap(ComponentPlacement.UNRELATED)
-          .addGroup(gl_pFilters.createParallelGroup(Alignment.LEADING)
-            .addComponent(lblExcludeExtensions, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-            .addComponent(taExcludeExt, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE))
-          .addPreferredGap(ComponentPlacement.UNRELATED)
-          .addGroup(gl_pFilters.createParallelGroup(Alignment.LEADING)
-            .addComponent(lblFilterDirectories, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
-            .addComponent(taFilterDir, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE))
-          .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-    );
-    gl_pFilters.setVerticalGroup(
-      gl_pFilters.createParallelGroup(Alignment.TRAILING)
-        .addGroup(gl_pFilters.createSequentialGroup()
-          .addGap(1)
-          .addGroup(gl_pFilters.createParallelGroup(Alignment.BASELINE)
-            .addComponent(lblFilterExtensions)
-            .addComponent(lblExcludeExtensions)
-            .addComponent(lblFilterDirectories))
-          .addPreferredGap(ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
-          .addGroup(gl_pFilters.createParallelGroup(Alignment.BASELINE)
-            .addComponent(taFilterExt, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
-            .addComponent(taExcludeExt, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-            .addComponent(taFilterDir, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)))
-    );
-    gl_pFilters.linkSize(SwingConstants.VERTICAL, new Component[] {taFilterExt, taExcludeExt, taFilterDir});
-    gl_pFilters.linkSize(SwingConstants.HORIZONTAL, new Component[] {taFilterExt, taExcludeExt, taFilterDir});
-    gl_pFilters.linkSize(SwingConstants.HORIZONTAL, new Component[] {lblFilterExtensions, lblExcludeExtensions, lblFilterDirectories});
-    pFilters.setLayout(gl_pFilters);
-    pControls.setLayout(gl_pControls);
-    frame.getContentPane().setLayout(groupLayout);
+    pWrapper.setLayout(gl_pWrapper);
+    frame.getContentPane().setLayout(gl);
   }
 }

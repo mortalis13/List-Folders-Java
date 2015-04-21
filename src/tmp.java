@@ -16,7 +16,7 @@ import java.awt.Insets;
 import javax.swing.JCheckBox;
 
 
-public class Tmp {
+public class tmp {
 
   private JFrame frame;
   private JTextField textField;

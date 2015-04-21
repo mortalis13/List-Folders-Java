@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
 
 public class ScanDirectory {
+  Functions fun;
+  
   String path;
 
   String text;
@@ -20,6 +23,16 @@ public class ScanDirectory {
   ArrayList<String> textArray;
   ArrayList<String> markupArray;
   ArrayList<TreeNode> jsonArray;
+  
+  ArrayList<String> filterExt;
+  ArrayList<String> excludeExt;
+  ArrayList<String> filterDir;
+  
+  boolean doExportText;
+  boolean doExportMarkup;
+  boolean doExportTree;
+  
+  String exportName;
 
   String nl = "\n";
   String pad = "  ";
@@ -45,27 +58,54 @@ public class ScanDirectory {
     "mov", "mp4", "mpg", "mpeg", "3gp",
   };
 
-  public ScanDirectory() {
+  public ScanDirectory(ListFoldersMain window) {
+    String filterExtText, excludeExtText, filterDirText;
+    fun=new Functions();
+    
     textArray = new ArrayList<String>();
     markupArray = new ArrayList<String>();
+    
+    HashMap fields=fun.getFieldsMap(window);
+    // fun.assignFields(window);
+    
+    path=(String)fields.get("path");
+    path=formatPath(path);
+    
+    filterExtText=(String)fields.get("filterExt");
+    excludeExtText=(String)fields.get("excludeExt");
+    filterDirText=(String)fields.get("filterDir");
+    
+    doExportText=(boolean)fields.get("doExportText");
+    doExportMarkup=(boolean)fields.get("doExportMarkup");
+    doExportTree=(boolean)fields.get("doExportTree");
+    
+    exportName=(String)fields.get("exportName");
+    
+//    System.out.println(path);
+//    System.out.println(filterExtText);
+//    System.out.println(excludeExtText);
+//    System.out.println(filterDirText);
+//    
+//    System.out.println(doExportText);
+//    System.out.println(doExportMarkup);
+//    System.out.println(doExportTree);
+//    System.out.println(exportName);
   }
 
-  public void processData(String path) {
-    this.path=formatPath(path);
-    
-    jsonArray = fullScan(path, -1);
+  public void processData() {
+   jsonArray = fullScan(path, -1);
 
-    if(textArray.size()==0){
-      text="No Data!";
-      return;
-    }
-    
-    text = join(textArray);
-    markup = join(markupArray);
+   if(textArray.size()==0){
+     text="No Data!";
+     return;
+   }
+   
+   text = join(textArray);
+   markup = join(markupArray);
 
-    exportText();
-    exportMarkup();
-    exportTree();
+//    exportText();
+//    exportMarkup();
+//    exportTree();
   }
   
   public ArrayList<TreeNode> fullScan(String dir, int level) {
