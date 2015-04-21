@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -66,7 +67,6 @@ public class ScanDirectory {
     markupArray = new ArrayList<String>();
     
     HashMap fields=fun.getFieldsMap(window);
-    // fun.assignFields(window);
     
     path=(String)fields.get("path");
     path=formatPath(path);
@@ -80,6 +80,11 @@ public class ScanDirectory {
     doExportTree=(boolean)fields.get("doExportTree");
     
     exportName=(String)fields.get("exportName");
+    
+    
+    filterExt=getFilters(filterExtText);
+    excludeExt=getFilters(excludeExtText);
+    filterDir=getFilters(filterDirText);
     
 //    System.out.println(path);
 //    System.out.println(filterExtText);
@@ -316,11 +321,46 @@ public class ScanDirectory {
   
   public ArrayList<String> getFilters(String filter) {
     ArrayList<String> list=new ArrayList<String>();
+    String[] elements;
+    filter=filter.trim();
+    
+    if(filter.length()!=0){
+      elements=filter.split("\n");
+      Collections.addAll(list, elements);
+      
+      for(int i=0;i<list.size();i++){
+        String item=list.get(i);
+        list.set(i,item.trim());
+      }
+    }
+    
     return list;
   }
   
   public boolean filterFile(String file) {
-    return true;
+    if(excludeExt.size()!=0){
+      for(String ext:excludeExt){
+        if(match("\\."+ext+"$",file))
+          return false;
+        
+//        Pattern pat=Pattern.compile("\\."+ext+"$");
+//        if(pat.matcher(file).matches())
+//          return false;
+      }
+      return true;
+    }
+    
+    if(filterExt.size()==0) return true;
+    for(String ext:filterExt){
+      if(match("\\."+ext+"$",file))
+        return true;
+    }
+    return false;
+  }
+  
+  public boolean match(String regex, String text) {
+    Pattern pat=Pattern.compile(regex);
+    return pat.matcher(text).matches();
   }
   
   public boolean filterDirectory(String dir) {

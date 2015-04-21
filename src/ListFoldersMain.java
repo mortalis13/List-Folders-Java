@@ -38,7 +38,6 @@ public class ListFoldersMain {
   JTextArea taOutput;
   JTextField tfPath;
   JTextField tfExportName;
-  JTextArea taFilterExt;
   JCheckBox chExportText;
   JCheckBox chExportMarkup;
   JCheckBox chExportTree;
@@ -49,6 +48,7 @@ public class ListFoldersMain {
   
   Database db;
   Functions fun;
+  private JTextArea taFilterExt;
 
   /**
    * Launch the application.

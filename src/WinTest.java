@@ -16,13 +16,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import java.awt.Dimension;
+import javax.swing.JScrollPane;
 
 
 public class WinTest {
 
   private JFrame frame;
-  JPanel panel;
-  public JCheckBox ch;
+  public JScrollPane scrollPane;
+  public JTextArea textArea_1;
 
   /**
    * Launch the application.
@@ -51,15 +52,12 @@ public class WinTest {
    * Initialize the contents of the frame.
    */
   private void initialize() {
-    panel = new JPanel();
     
     frame = new JFrame();
-    frame.setSize(new Dimension(300, 500));
+    frame.setSize(new Dimension(498, 565));
     frame.addComponentListener(new ComponentAdapter() {
       @Override
       public void componentResized(ComponentEvent e) {
-        System.out.println("Panel size: "+panel.getWidth());
-        System.out.println("Panel pref size: "+panel.getPreferredSize());
       }
     });
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,11 +65,10 @@ public class WinTest {
     JButton button = new JButton("New button");
     button.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        System.out.println(ch.isSelected());
       }
     });
     
-    ch = new JCheckBox("New check box");
+    scrollPane = new JScrollPane();
     
     GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
     groupLayout.setHorizontalGroup(
@@ -79,42 +76,22 @@ public class WinTest {
         .addGroup(groupLayout.createSequentialGroup()
           .addContainerGap()
           .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-            .addComponent(ch)
-            .addComponent(panel, 0, 498, Short.MAX_VALUE)
-            .addComponent(button))
-          .addContainerGap())
+            .addComponent(button)
+            .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 460, GroupLayout.PREFERRED_SIZE))
+          .addContainerGap(12, Short.MAX_VALUE))
     );
     groupLayout.setVerticalGroup(
       groupLayout.createParallelGroup(Alignment.LEADING)
         .addGroup(groupLayout.createSequentialGroup()
-          .addComponent(panel, GroupLayout.PREFERRED_SIZE, 190, GroupLayout.PREFERRED_SIZE)
-          .addGap(18)
-          .addComponent(ch)
-          .addGap(18)
+          .addGap(12)
+          .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 231, GroupLayout.PREFERRED_SIZE)
+          .addPreferredGap(ComponentPlacement.RELATED)
           .addComponent(button)
-          .addContainerGap(211, Short.MAX_VALUE))
+          .addContainerGap(254, Short.MAX_VALUE))
     );
     
-    JTextArea textArea = new JTextArea();
-    textArea.setMargin(new Insets(20, 20, 20, 20));
-    textArea.setLineWrap(true);
-    GroupLayout gl_panel = new GroupLayout(panel);
-    gl_panel.setHorizontalGroup(
-      gl_panel.createParallelGroup(Alignment.LEADING)
-        .addGroup(gl_panel.createSequentialGroup()
-          .addComponent(textArea, 0, 594, Short.MAX_VALUE)
-          .addContainerGap())
-    );
-    gl_panel.setVerticalGroup(
-      gl_panel.createParallelGroup(Alignment.LEADING)
-        .addGroup(gl_panel.createSequentialGroup()
-          .addContainerGap()
-          .addComponent(textArea, 0, 420, Short.MAX_VALUE)
-          .addContainerGap())
-    );
-    gl_panel.setAutoCreateGaps(true);
-    gl_panel.setAutoCreateContainerGaps(true);
-    panel.setLayout(gl_panel);
+    textArea_1 = new JTextArea();
+    scrollPane.setViewportView(textArea_1);
     frame.getContentPane().setLayout(groupLayout);
   }
 }
