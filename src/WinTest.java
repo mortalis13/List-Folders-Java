@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import java.awt.Dimension;
 import javax.swing.JScrollPane;
+import javax.swing.JInternalFrame;
 
 
 public class WinTest {
@@ -24,6 +25,7 @@ public class WinTest {
   private JFrame frame;
   public JScrollPane scrollPane;
   public JTextArea textArea_1;
+  public JInternalFrame internalFrame;
 
   /**
    * Launch the application.
@@ -60,15 +62,20 @@ public class WinTest {
       public void componentResized(ComponentEvent e) {
       }
     });
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     
     JButton button = new JButton("New button");
     button.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        ManageOptions manOpt = new ManageOptions();
+        manOpt.setVisible(true);
       }
     });
     
     scrollPane = new JScrollPane();
+    
+    internalFrame = new JInternalFrame("New JInternalFrame");
+    internalFrame.setVisible(true);
     
     GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
     groupLayout.setHorizontalGroup(
@@ -76,6 +83,7 @@ public class WinTest {
         .addGroup(groupLayout.createSequentialGroup()
           .addContainerGap()
           .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+            .addComponent(internalFrame, GroupLayout.PREFERRED_SIZE, 265, GroupLayout.PREFERRED_SIZE)
             .addComponent(button)
             .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 460, GroupLayout.PREFERRED_SIZE))
           .addContainerGap(12, Short.MAX_VALUE))
@@ -87,7 +95,9 @@ public class WinTest {
           .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 231, GroupLayout.PREFERRED_SIZE)
           .addPreferredGap(ComponentPlacement.RELATED)
           .addComponent(button)
-          .addContainerGap(254, Short.MAX_VALUE))
+          .addPreferredGap(ComponentPlacement.RELATED)
+          .addComponent(internalFrame, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
+          .addContainerGap(73, Short.MAX_VALUE))
     );
     
     textArea_1 = new JTextArea();

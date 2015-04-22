@@ -1,4 +1,7 @@
+import java.awt.Window;
 import java.util.HashMap;
+
+import javax.swing.JFrame;
 
 import com.google.gson.Gson;
 
@@ -65,6 +68,15 @@ public class Functions {
     HashMap fields;
     fields=new Gson().fromJson(json, HashMap.class);
     return fields;
+  }
+  
+  void stickWindow(JFrame to, Window what){
+    int x=to.getX(), 
+        y=to.getY(),
+        w=to.getWidth();
+    
+    if(what!=null)
+      what.setLocation(x+w,y);
   }
   
 }
