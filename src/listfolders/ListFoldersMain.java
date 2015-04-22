@@ -97,9 +97,6 @@ public class ListFoldersMain {
    * Initialize the contents of the frame.
    */
   private void initialize() {
-    db=new Database();
-    fun=new Functions();
-    
     frame = new JFrame();
     frame.addComponentListener(new ComponentAdapter() {
       @Override
@@ -118,7 +115,9 @@ public class ListFoldersMain {
       }
       @Override
       public void windowOpened(WindowEvent e) {
-        fun.loadFields(window);
+        db=new Database();
+        fun=new Functions();
+        fun.loadFields();
       }
     });
     frame.setBounds(0, 0, 516, 600);

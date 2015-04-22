@@ -72,36 +72,32 @@ public class Database {
     }
   }
   
-  public void addOption(String name, String value, String table) throws SQLException{
-    sql="insert into "+table+" (name,value) values(?,?)";
-    prep = conn.prepareStatement(sql);
-    prep.setString(1, name);
-    prep.setString(2, value);
-    prep.execute();
-  }
-  
   public void updateConfig(String name, String value){
     updateOption(name,value,config_table);
   }
   
   public String loadLastOptions(){
-    table=config_table;
-    
-    sql="select value from "+table+" where name='last'";
+    return getOption("last", config_table);
+  }
+  
+  public String getOption(String name){
+    return getOption(name, options_table);
+  }
+  
+  public String getOption(String name, String table){
+    sql="select value from "+table+" where name=?";
     
     try {
       prep = conn.prepareStatement(sql);
+      prep.setString(1, name);
       rs=prep.executeQuery();
       
-      if(!rs.next()){
-        return "";
-      }
-      
+      if(!rs.next()) return null;
       return rs.getString(1);
       
     } catch (SQLException e) {
       e.printStackTrace();
-      return "";
+      return null;
     }
   }
   
@@ -116,18 +112,37 @@ public class Database {
       st = conn.createStatement();
       rs=st.executeQuery(sql);
       
-      while(rs.next()){
+      while(rs.next())
         list.add(rs.getString("name"));
-      }
       
-      if(list.size()==0)
-        return null;
+      if(list.size()==0) return null;
       return list;
       
     } catch (SQLException e) {
       e.printStackTrace();
       return null;
     }
+  }
+  
+  public void removeOption(String name) {
+    table=options_table;
+    sql="delete from "+table+" where name=?";
+    
+    try {
+      prep = conn.prepareStatement(sql);
+      prep.setString(1, name);
+      prep.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  public void addOption(String name, String value, String table) throws SQLException{
+    sql="insert into "+table+" (name,value) values(?,?)";
+    prep = conn.prepareStatement(sql);
+    prep.setString(1, name);
+    prep.setString(2, value);
+    prep.execute();
   }
   
 }

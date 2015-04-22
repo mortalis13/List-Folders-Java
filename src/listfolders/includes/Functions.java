@@ -1,5 +1,10 @@
 package listfolders.includes;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Window;
+import java.awt.geom.Line2D;
 import java.util.HashMap;
 
 import javax.swing.JFrame;
@@ -11,15 +16,25 @@ import com.google.gson.Gson;
 
 public class Functions {
   
-  public void loadFields(ListFoldersMain window){
-    Database db=window.db;
+  ListFoldersMain window;
+  Database db;
+  
+  public Functions(){
+    window=ListFoldersMain.window;
+    db=ListFoldersMain.db;
+  }
+  
+  public void loadFields(String fieldsList){
     HashMap<String,Object> fields;
-    
-    String last=db.loadLastOptions(); 
-    if(last.length()==0) return;
-    
-    fields=decodeJSON(last);
-    assignFields(window,fields);
+    if(fieldsList.length()==0) return;
+    fields=decodeJSON(fieldsList);
+    assignFields(fields);
+  }
+  
+  public void loadFields(){
+    String last=db.loadLastOptions();
+    if(last==null) return;
+    loadFields(last);
   }
   
   public HashMap getFieldsMap(ListFoldersMain window){
@@ -50,7 +65,7 @@ public class Functions {
     return map;
   }
   
-  private void assignFields(ListFoldersMain window, HashMap fields){
+  private void assignFields(HashMap fields){
     window.tfPath.setText((String) fields.get("path"));
     window.taFilterExt.setText((String) fields.get("filterExt"));
     window.taExcludeExt.setText((String) fields.get("excludeExt"));
@@ -80,6 +95,16 @@ public class Functions {
     
     if(what!=null)
       what.setLocation(x+w,y);
+  }
+  
+  public void drawDashedBorder(Graphics g, int length){
+    Graphics2D g2=(Graphics2D)g;
+    float dash1[] = {1.0f};
+    BasicStroke stroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash1, 0.0f);
+    g2.setStroke(stroke);
+    g2.setColor((Color) new Color(120, 120, 120));
+    
+    g2.draw(new Line2D.Double(0, 0, length, 0));
   }
   
 }
