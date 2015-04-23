@@ -32,7 +32,7 @@ public class ScanDirectory {
   public String path;
 
   public String text="";
-  String markup;
+  String markup="";
   String json;
 
   ArrayList<String> textArray;
@@ -90,6 +90,11 @@ public class ScanDirectory {
       window.taOutput.setText("");
       
       jsonArray = fullScan(path, 0);
+      
+      if(doExportText) exportText();
+      if(doExportMarkup) exportMarkup();
+      if(doExportTree) exportTree();
+      
       return null;
     }
     
@@ -97,7 +102,7 @@ public class ScanDirectory {
       window.bScanDir.setText("Scan Directory");
       window.bScanDir.setActionCommand("scan");
       
-      if(text.length()==0) text="No Data!";
+      if(text.length()==0 && doExportText) text="No Data!";
       window.taOutput.setText(text);
       
       if(scanCanceled){
@@ -143,13 +148,19 @@ public class ScanDirectory {
         
         if (file.isDirectory() == true) {                       // directories
           String currentDir = "[" + value + "]";
-          text+=pad + currentDir+nl;
+          
+          if(doExportText)
+            text+=pad+currentDir+nl;
+          if(doExportMarkup)
+            markup+=pad+wrapDir(currentDir)+nl;
 
           res = fullScan(item, level + 1);                      // recursive scan
           if(res==null) return null;
           
-          node = new DirNode(value, res);
-          json.add(node);
+          if(doExportTree){
+            node = new DirNode(value, res);
+            json.add(node);
+          }
           
           if(level==0){
             dirCount++;
@@ -160,10 +171,16 @@ public class ScanDirectory {
           }
         } else {                                                // files
           String currentFile = value;
-          text+=pad+currentFile+nl;
           
-          node = new FileNode(value, getIcon(value));
-          json.add(node);
+          if(doExportText)
+            text+=pad+currentFile+nl; 
+          if(doExportMarkup)
+            markup+=pad+wrapFile(currentFile)+nl;
+          
+          if(doExportTree){
+            node = new FileNode(value, getIcon(value));
+            json.add(node);
+          }
         }
       }
 
@@ -221,34 +238,7 @@ public class ScanDirectory {
     filterDir=getFilters(filterDirText);
   }
 
-  /*
-   * Scans the directory
-   * Outputs the result as text
-   * Exports result if checkboxes are selected
-   */
-  public void processData() {                                   // << Start point >>
-    
-//    worker = new ScanWorker();
-//    worker.execute();
-    
-//    jsonArray = fullScan(path, -1);
-    
-//    startScan();
-
-//    if(textArray.size()==0){
-//      text="No Data!";
-//      return;
-//    }
-//    
-//    text = join(textArray, "\n");                                 // internal join() method
-//    markup = join(markupArray, "\n");
-//
-//    if(doExportText) exportText();
-//    if(doExportMarkup) exportMarkup();
-//    if(doExportTree) exportTree();
-  }
-  
-  public void startScan(){
+  public void startScan(){                                  // << Start point >>
     scanCanceled=false;
     worker=new ScanWorker();
     worker.addPropertyChangeListener(worker);
