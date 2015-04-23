@@ -3,17 +3,54 @@ package tests;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.geom.Line2D;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+
+import tests.DashedBorder.DashedLineIcon;
+
+class CustomBorder implements Border{ 
+  
+  public void paintBorder(Component c, Graphics g, int x, int y, int width, int height){
+    drawBorder(c,g);
+  }
+  
+  public Insets getBorderInsets(Component c){
+    return new Insets(0,0,0,0);
+  }
+  
+  public boolean isBorderOpaque(){
+    return true;
+  }
+  
+  private void drawBorder(Component c, Graphics g){
+    int x = c.getWidth();
+    float dash[] = {1.0f};
+    Graphics2D g2;
+    BasicStroke stroke;
+
+    g2 = (Graphics2D)g;
+    stroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f);
+    g2.setStroke(stroke);
+    g2.setColor((Color) new Color(120, 120, 120));
+
+    g2.draw(new Line2D.Double(0, 0, x, 0));
+  }
+}
 
 public class TestDialog extends JDialog {
 
@@ -55,12 +92,30 @@ public class TestDialog extends JDialog {
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
     
-    panel = new JPanel(){
-      @Override
-      public void paintComponent(Graphics g){
-        drawBorder(g);
-      }
-    };
+    Icon icon = new DashedLineIcon(Color.BLACK, 1, 1, 1, 0);
+    Border matte = BorderFactory.createMatteBorder(1, 0, 0, 0, icon);
+//    lStatus.setBorder( matte );
+    
+//    System.out.println(matte.getBorderInsets(lStatus));
+    
+    Border dashed = BorderFactory.createDashedBorder(null, 5, 5);
+    Border empty = BorderFactory.createEmptyBorder(1, 0, 0, 0);
+//    Border empty = BorderFactory.createEmptyBorder(1, -1, -1, -1);
+    Border compound = new CompoundBorder(empty, dashed);
+    
+    Border custom=new CustomBorder();
+    
+    panel = new JPanel();
+//    panel.setBorder( compound );
+//    panel.setBorder( matte );
+    panel.setBorder( custom );
+    
+//    panel = new JPanel(){
+//      @Override
+//      public void paintComponent(Graphics g){
+//        drawBorder(g);
+//      }
+//    };
     
     FlowLayout flowLayout = (FlowLayout) panel.getLayout();
     flowLayout.setAlignment(FlowLayout.LEFT);

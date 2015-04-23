@@ -45,7 +45,7 @@ public class ScanDirectory {
   String pad = "  ";
   String iconsPath="./lib/images/";
   
-  String[] exts={
+  String[] exts={                                       // sets of extensions for tree view icons (stored in lib/images)
     "chm", "css", "djvu", "dll", "doc", 
     "exe", "html", "iso", "js", "msi", 
     "pdf", "php", "psd", "rar", "txt", 
@@ -65,14 +65,14 @@ public class ScanDirectory {
     "mov", "mp4", "mpg", "mpeg", "3gp",
   };
 
-  public ScanDirectory(ListFoldersMain window) {
+  public ScanDirectory() {
     String filterExtText, excludeExtText, filterDirText;
     fun=new Functions();
     
     textArray = new ArrayList<String>();
     markupArray = new ArrayList<String>();
     
-    HashMap fields=fun.getFieldsMap(window);
+    HashMap fields=fun.getFieldsMap();
     
     path=(String)fields.get("path");
     path=formatPath(path);
@@ -87,23 +87,17 @@ public class ScanDirectory {
     
     exportName=(String)fields.get("exportName");
     
-    
     filterExt=getFilters(filterExtText);
     excludeExt=getFilters(excludeExtText);
     filterDir=getFilters(filterDirText);
-    
-//    System.out.println(path);
-//    System.out.println(filterExtText);
-//    System.out.println(excludeExtText);
-//    System.out.println(filterDirText);
-//    
-//    System.out.println(doExportText);
-//    System.out.println(doExportMarkup);
-//    System.out.println(doExportTree);
-//    System.out.println(exportName);
   }
 
-  public void processData() {
+  /*
+   * Scans the directory
+   * Outputs the result as text
+   * Exports result if checkboxes are selected
+   */
+  public void processData() {                                   // << Start point >>
     jsonArray = fullScan(path, -1);
 
     if(textArray.size()==0){
@@ -111,7 +105,7 @@ public class ScanDirectory {
       return;
     }
     
-    text = join(textArray, "\n");
+    text = join(textArray, "\n");                                 // internal join() method
     markup = join(markupArray, "\n");
 
     if(doExportText) exportText();
@@ -119,6 +113,9 @@ public class ScanDirectory {
     if(doExportTree) exportTree();
   }
   
+  /*
+   * Recursive scans all subdirectories
+   */
   public ArrayList<TreeNode> fullScan(String dir, int level) {
     ArrayList<TreeNode> json, res;
     ArrayList<String> list;
@@ -126,11 +123,11 @@ public class ScanDirectory {
     String pad;
     File file;
     
-    json = new ArrayList<TreeNode>();
+    json = new ArrayList<TreeNode>();                               // json is recursive tree structure needed for the jsTree plugin
 
     file = new File(dir);
-    data = file.list();
-    list = prepareData(data, dir);
+    data = file.list();                                             // get string list of files in the current level directory
+    list = prepareData(data, dir);                                  // clean of filtered dirs and exts, sort by name and put directories first
     pad = getPadding(level);
 
     for (String value : list) {
@@ -138,23 +135,23 @@ public class ScanDirectory {
       String item = dir + '/' + value;
       file = new File(item);
 
-      if (file.isDirectory() == true) {
+      if (file.isDirectory() == true) {                       // directories
         boolean passed=true;
-        if(filterDir.size()!=0 && level==-1){
-          passed=filterDirectory(value);                  // filter directories
+        if(filterDir.size()!=0 && level==-1){                 // filter directories
+          passed=filterDirectory(value);                 
         }
         if(!passed) continue;
           
         String currentDir = "[" + value + "]";
 
-        textArray.add(pad + currentDir);
+        textArray.add(pad + currentDir);                      // add text and markup lines to arrays
         markupArray.add(wrapDir(pad + currentDir));
 
-        res = fullScan(item, level + 1);
+        res = fullScan(item, level + 1);                      // recursive scan
 
         node = new DirNode(value, res);
         json.add(node);
-      } else {
+      } else {                                                // files
         String currentFile = value;
 
         textArray.add(pad + currentFile);
@@ -170,6 +167,10 @@ public class ScanDirectory {
 
   // --------------------------------------------------- helpers ---------------------------------------------------
   
+  /*
+   * Filters files and folders
+   * Sorts by name and directories-first order
+   */
   public ArrayList<String> prepareData(String[] data, String dir) {
     ArrayList<String> folders = new ArrayList<String>(), 
     files = new ArrayList<String>(), list;
@@ -178,9 +179,9 @@ public class ScanDirectory {
       String item = dir + '/' + value;
       File f = new File(item);
 
-      if (f.isDirectory() == true) {
+      if (f.isDirectory() == true) {                    // add directories
         folders.add(value);
-      } else if (filterFile(value)) {
+      } else if (filterFile(value)) {                   // filter files and add
         files.add(value);
       }
     }
@@ -189,6 +190,9 @@ public class ScanDirectory {
     return list;
   }
 
+  /*
+   * Merge folders and files arrays
+   */
   public ArrayList<String> getList(ArrayList<String> folders, ArrayList<String> files) {
     ArrayList<String> list = new ArrayList<String>();
     Collections.sort(folders);
@@ -197,26 +201,38 @@ public class ScanDirectory {
     list.addAll(files);
     return list;
   }
-
-  public String getPadding(int level) {
-    String resPad = "";
-    for (int i = 0; i <= level; i++) {
-      resPad += pad;
-    }
-    return resPad;
-  }
   
+  /*
+   * Formats path, fixes backslashes, trims and removes last slash
+   */
+  public String formatPath(String path) {
+    path=path.replace('\\', '/');
+    path=path.trim();
+    
+    int last=path.length()-1;
+    if(path.substring(last)=="/")
+      path=path.substring(0,last);
+    
+    return path;
+  }
+
+  /*
+   * Replaces strings from the tree template (strings format: '_string_') with the 'replacement' text
+   */
   private String replaceTemplate(String tmpl, String replacement, String text){
     text=text.replace(tmpl, replacement);
     return text;
   }
   
+  /*
+   * Gets the template for the tree view (jsTree plugin)
+   */
   private String readTemplate(String tmpl) {
     String doc = "", line = null;
     BufferedReader br = null;
 
     try {
-      br = new BufferedReader(new FileReader("templates/tree.html"));
+      br = new BufferedReader(new FileReader("templates/tree.html"));               // read by lines
       while ((line = br.readLine()) != null) {
         doc += line+nl;
       }
@@ -234,6 +250,10 @@ public class ScanDirectory {
     return doc;
   }
 
+  /*
+   * Writes the text to the file
+   * filename contains extension
+   */
   private void writeFile(String filename, String text) {
     File file;
     PrintWriter writer;
@@ -250,17 +270,20 @@ public class ScanDirectory {
     }
   }
   
-  public String formatPath(String path) {
-    path=path.replace('\\', '/');
-    path=path.trim();
-    
-    int last=path.length()-1;
-    if(path.substring(last)=="/")
-      path=path.substring(0,last);
-    
-    return path;
+  /*
+   * Outputs padding spaces for text output depending on nesting level
+   */
+  public String getPadding(int level) {
+    String resPad = "";
+    for (int i = 0; i <= level; i++) {
+      resPad += pad;
+    }
+    return resPad;
   }
   
+  /*
+   * Returns icon path for the tree view
+   */
   private String getIcon(String file){
     String ext, icon, path, iconExt;
     boolean useDefault=true;
@@ -273,12 +296,12 @@ public class ScanDirectory {
     Pattern pat=Pattern.compile("\\.[\\w]+$");
     Matcher mat=pat.matcher(file);
     
-    if(!mat.find()) return icon;
+    if(!mat.find()) return icon;                                // first run find() then get results
     
-    ext=mat.group();
+    ext=mat.group();                                            // string result
     ext=ext.substring(1);
     
-    if(useDefault){
+    if(useDefault){                                             // process different types of extensions
       for(String item : exts){
         if(item.equals(ext)){
           icon=path+item+iconExt;
@@ -321,6 +344,9 @@ public class ScanDirectory {
     return icon;
   }
   
+  /*
+   * Joins array items into a string with separators
+   */
   public String join(ArrayList<String> array, String separator) {
     String res = "";
     for(int i=0;i<array.size();i++){
@@ -331,6 +357,9 @@ public class ScanDirectory {
     return res;
   }
   
+  /*
+   * Checks if text matches partially to regex
+   */
   public boolean match(String regex, String text) {
     Pattern pat=Pattern.compile(regex);
     return pat.matcher(text).find();
@@ -338,6 +367,9 @@ public class ScanDirectory {
   
 // --------------------------------------------------- filters ---------------------------------------------------
   
+  /*
+   * Cleans, trims and checks filters for emptiness
+   */
   public ArrayList<String> getFilters(String filter) {
     ArrayList<String> list=new ArrayList<String>();
     String[] elements;
@@ -356,6 +388,10 @@ public class ScanDirectory {
     return list;
   }
   
+  /*
+   * Filters file extensions and returns true if the file will be included in the output
+   * If exclude filter is not empty ignores the include filter
+   */
   public boolean filterFile(String file) {
     if(excludeExt.size()!=0){
       for(String ext:excludeExt){
@@ -373,6 +409,9 @@ public class ScanDirectory {
     return false;
   }
   
+  /*
+   * Uses form filter to filter directories from the first scanning level
+   */
   public boolean filterDirectory(String dir) {
     for(String filter:filterDir){
       if(filter.equals(dir))
@@ -381,6 +420,9 @@ public class ScanDirectory {
     return false;
   }
   
+  /*
+   * Gets text for the tree template
+   */
   public String getFiltersText() {
     String filterExtText="", excludeExtText="", filterDirText="", filters="";
     
@@ -423,6 +465,9 @@ public class ScanDirectory {
 
   // --------------------------------------------------- exports ---------------------------------------------------
 
+  /*
+   * Exports text to a .txt file in 'export/text'
+   */
   private void exportText() {
     File file;
     String exportPath, fileName, ext;
@@ -435,6 +480,9 @@ public class ScanDirectory {
     writeFile(fileName,text);
   }
   
+  /*
+   * Exports HTML markup to a .hmtl file in 'export/markup'
+   */
   private void exportMarkup() {
     File file;
     String exportPath, fileName, ext;
@@ -448,6 +496,15 @@ public class ScanDirectory {
     writeFile(fileName, markup);
   }
   
+  /*
+   * Exports .json and .html files to the 'export/tree'
+   * The .html file can be used directly to view the tree
+   * The jsTree plugin must be in the 'tree/lib'
+   *
+   * The method gets the .html template from 'templates/tree.html', 
+   * replaces template strings with the current data and create new .html in the 'exports/tree'
+   * Then creates .json in the 'exports/tree/json' which is read by the script in the exported .html page
+   */
   private void exportTree() {
     String tmpl, doc, treeName, exportPath, jsonFolder, 
     jsonPath, exportDoc, exportJSON;
@@ -457,7 +514,7 @@ public class ScanDirectory {
     Gson gson = new Gson();
     String json = gson.toJson(jsonArray);
 
-    treeName=getExportName(null);
+    treeName=getExportName(null);                                         // get name
     
     tmpl="templates/tree.html";
     exportPath="export/tree/";
@@ -467,7 +524,7 @@ public class ScanDirectory {
     exportDoc=treeName+".html";
     exportJSON=treeName+".json";
     
-    doc=readTemplate(tmpl);
+    doc=readTemplate(tmpl);                                               // process template
     doc=replaceTemplate("_jsonPath_", jsonFolder+exportJSON, doc);
     doc=replaceTemplate("_Title_", "Directory: "+treeName, doc);
     doc=replaceTemplate("_FolderPath_", "Directory: "+path, doc);
@@ -475,13 +532,17 @@ public class ScanDirectory {
     filters=getFiltersText();
     doc=replaceTemplate("_Filters_", "Filters: "+filters, doc);
     
-    htmlFile=exportPath+exportDoc;
+    htmlFile=exportPath+exportDoc;                                        // get paths
     jsonFile=jsonPath+exportJSON;
       
-    writeFile(htmlFile, doc);
+    writeFile(htmlFile, doc);                                             // write results
     writeFile(jsonFile, json);
   }
   
+  /*
+   * Returns the name that will be used to export 
+   * text, markup and tree views of the directory structure
+   */
   private String getExportName(String ext){
     boolean useCurrentDir=true;
     String exportName, name;

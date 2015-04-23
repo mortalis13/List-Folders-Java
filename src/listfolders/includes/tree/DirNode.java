@@ -1,7 +1,9 @@
 package listfolders.includes.tree;
 import java.util.ArrayList;
 
-
+/*
+ * Directory node
+ */
 public class DirNode extends TreeNode{
   ArrayList<TreeNode> children;
   

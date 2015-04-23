@@ -21,19 +21,28 @@ public class ManageOptions {
     db=ListFoldersMain.db;
   }
   
+  /*
+   * Adds option with entered name to the database
+   */
   public void addOption(String name){
     String value;
-    value=fun.encodeJSON(fun.getFieldsMap(window));
+    value=fun.encodeJSON(fun.getFieldsMap());               // get key/value Array of all field values the serialize it
     db.updateOption(name, value);
     listOptions("(+1 new)");
   }
   
+  /*
+   * Removes option selected in the dropdown from the database
+   */
   public void removeOption(String name){
     String value;
     db.removeOption(name);
     listOptions("(1 removed)");
   }
   
+  /*
+   * Loads an option selected in the dropdown
+   */
   public void loadOption(String name){
     String value;
     value=db.getOption(name);
@@ -41,6 +50,11 @@ public class ManageOptions {
     fun.loadFields(value);
   }
   
+  /*
+   * Gets all option names from the 'options' table
+   * and assigns the retrieved list to the ComboBox
+   * Then print the status message about total count of items
+   */
   public void listOptions(String msg){
     ArrayList<String> list;
     String[] array;
@@ -49,7 +63,7 @@ public class ManageOptions {
     list=db.listOptions();
     if(list==null) return;
     
-    array=list.toArray(new String[0]);
+    array=list.toArray(new String[0]);                                // convert ArrayList to Array for ComboBox model
     count=list.size();
     
     DefaultComboBoxModel model=new DefaultComboBoxModel(array);
@@ -61,6 +75,9 @@ public class ManageOptions {
     dialog.lStatus.setText(count+" options loaded"+msg);
   }
   
+  /*
+   * Method with default status message
+   */
   public void listOptions(){
     listOptions(null);
   }

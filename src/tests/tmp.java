@@ -31,19 +31,11 @@ public class tmp {
       public void run() {
         try {
           Temp window = new Temp();
-          window.frame.setVisible(true);
         } catch (Exception e) {
           e.printStackTrace();
         }
       }
     });
-  }
-
-  /**
-   * Create the application.
-   */
-  public Temp() {
-    initialize();
   }
 
   /**

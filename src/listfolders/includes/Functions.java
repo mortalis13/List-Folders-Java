@@ -24,6 +24,10 @@ public class Functions {
     db=ListFoldersMain.db;
   }
   
+  /*
+   * Loads field values from the 'options' table
+   * and assigns each value to appropriate field on the form
+   */
   public void loadFields(String fieldsList){
     HashMap<String,Object> fields;
     if(fieldsList.length()==0) return;
@@ -31,13 +35,22 @@ public class Functions {
     assignFields(fields);
   }
   
+  /*
+   * Loads and assign the last options set
+   * saved after previous application session
+   * Redirects to more general method loadFields(String)
+   */
   public void loadFields(){
     String last=db.loadLastOptions();
     if(last==null) return;
     loadFields(last);
   }
   
-  public HashMap getFieldsMap(ListFoldersMain window){
+  /*
+   * Gets HashMap of all form fields
+   * which is used to serialize them to JSON string
+   */
+  public HashMap getFieldsMap(){
     HashMap<String,Object> map=new HashMap<String,Object>();
       
     String path, filterExt, excludeExt, filterDir, exportName;
@@ -65,6 +78,9 @@ public class Functions {
     return map;
   }
   
+  /*
+   * Assigns values from the HashMap to form fields
+   */
   private void assignFields(HashMap fields){
     window.tfPath.setText((String) fields.get("path"));
     window.taFilterExt.setText((String) fields.get("filterExt"));
@@ -77,17 +93,26 @@ public class Functions {
     window.tfExportName.setText((String) fields.get("exportName"));
   }
   
+  /*
+   * Gets JSON string from an object (array, array list, hash map)
+   */
   public String encodeJSON(Object collection){
     Gson gson=new Gson();
     return gson.toJson(collection);
   }
   
+  /*
+   * Gets HashMap from JSON string
+   */
   public HashMap decodeJSON(String json){
     HashMap fields;
     fields=new Gson().fromJson(json, HashMap.class);
     return fields;
   }
   
+  /*
+   * Moves dialog window to the right boundary of the main window
+   */
   public void stickWindow(JFrame to, Window what){
     int x=to.getX(), 
         y=to.getY(),
@@ -95,16 +120,6 @@ public class Functions {
     
     if(what!=null)
       what.setLocation(x+w,y);
-  }
-  
-  public void drawDashedBorder(Graphics g, int length){
-    Graphics2D g2=(Graphics2D)g;
-    float dash1[] = {1.0f};
-    BasicStroke stroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash1, 0.0f);
-    g2.setStroke(stroke);
-    g2.setColor((Color) new Color(120, 120, 120));
-    
-    g2.draw(new Line2D.Double(0, 0, length, 0));
   }
   
 }

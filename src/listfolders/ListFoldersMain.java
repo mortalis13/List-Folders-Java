@@ -14,11 +14,15 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Enumeration;
 
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
+import javax.swing.DefaultButtonModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -60,13 +64,19 @@ public class ListFoldersMain {
   public JScrollPane pFilterDirScroll;
   public JScrollPane pOutputScroll;
   
+  public JToggleButton bManageOptions;
+  public JButton bScanDir;
+  
+  public JButton bClearFilterExt;
+  public JButton bClearExcludeExt;
+  public JButton bClearFilterDir;
+  public JButton bToggleExports;
+  
   public static ListFoldersMain window;
   public static Database db;
   public static Functions fun;
-  
-  public JToggleButton btnManageOptions;
-  
   public static ManageOptionsDialog manOptDialog;
+  
   public Dialog dialog;
 
   /**
@@ -85,6 +95,35 @@ public class ListFoldersMain {
       }
     });
   }
+  
+  /*
+   * Adds global keyboard shortcuts
+   */
+  private void addKeyboardManager(){
+    KeyboardFocusManager keyManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+    keyManager.addKeyEventDispatcher( new KeyEventDispatcher() {
+      
+      @Override
+      public boolean dispatchKeyEvent(KeyEvent e) {
+       // KeyStroke key1 = KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.ALT_DOWN_MASK);
+       // KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
+        
+        if(e.getID()==KeyEvent.KEY_PRESSED && e.getKeyCode()==27){                              // ESC
+          SwingUtilities.invokeLater( new Runnable() {
+            @Override
+            public void run() {
+              frame.dispose();
+             // System.exit(0);
+            }
+          } );
+           
+          return true;
+        }
+        return false;
+      }
+      
+    });
+  }
 
   /**
    * Create the application.
@@ -101,21 +140,21 @@ public class ListFoldersMain {
     frame.addComponentListener(new ComponentAdapter() {
       @Override
       public void componentMoved(ComponentEvent e) {
-        if(manOptDialog!=null && manOptDialog.isVisible())
+        if(manOptDialog!=null && manOptDialog.isVisible())                    // put dialog to the right border of the main window
           fun.stickWindow(frame, manOptDialog);
       }
     });
     frame.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosed(WindowEvent e) {
-        String value=fun.encodeJSON(fun.getFieldsMap(window));
+        String value=fun.encodeJSON(fun.getFieldsMap());                     // save field values to the database on exit to restore them in the next session
         db.updateConfig("last",value);
         if(manOptDialog!=null)
           manOptDialog.dispose();
       }
       @Override
-      public void windowOpened(WindowEvent e) {
-        db=new Database();
+      public void windowOpened(WindowEvent e) {                             // assign static objects for use in other classes
+        db=new Database();                                                  // and load last saved fields from the DB
         fun=new Functions();
         fun.loadFields();
       }
@@ -123,58 +162,59 @@ public class ListFoldersMain {
     frame.setBounds(0, 0, 516, 600);
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     
-    KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-    kfm.addKeyEventDispatcher( new KeyEventDispatcher() {
-      
-      @Override
-      public boolean dispatchKeyEvent(KeyEvent e) {
-//        KeyStroke key1 = KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.ALT_DOWN_MASK);
-//        KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
-        
-        if(e.getID()==KeyEvent.KEY_PRESSED && e.getKeyCode()==27){
-          SwingUtilities.invokeLater( new Runnable() {
-            @Override
-            public void run() {
-              frame.dispose();
-//              System.out.println("Esc");
-//              System.exit(0);
-            }
-          } );
-           
-          return true;
-        }
-        return false;
+    addKeyboardManager();                                                     // global keyboard shortcuts
+    
+    bClearFilterExt = new JButton("Clear");
+    bClearExcludeExt = new JButton("Clear");
+    bClearFilterDir = new JButton("Clear");
+    bToggleExports = new JButton("Toggle All");
+    
+    bClearFilterExt.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e){
+        taFilterExt.setText("");
       }
-      
+    });
+    bClearExcludeExt.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e){
+        taExcludeExt.setText("");
+      }
+    });
+    bClearFilterDir.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e){
+        taFilterDir.setText("");
+      }
+    });
+    bToggleExports.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e){
+        JCheckBox[] exports={chExportText, chExportMarkup, chExportTree};
+        boolean clear=false;
+        
+        for(JCheckBox item:exports){                                          // if at least one checkbox is selected then clear all
+          if(item.isSelected()){
+            item.setSelected(false);
+            clear=true;
+          }
+        }
+        
+        if(!clear){                                                           // if all are clear then select all
+          for(JCheckBox item:exports){
+            item.setSelected(true);
+          }
+        }
+      }
     });
     
-    pFilterExtScroll = new JScrollPane();
-    pExcludeExtScroll = new JScrollPane();
-    pFilterDirScroll = new JScrollPane();
-    pOutputScroll = new JScrollPane();
-      
-    JButton bScanDir = new JButton("Scan Directory");
-    bScanDir.addKeyListener(new KeyAdapter() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == 27) {
-          System.exit(0);
-        }
-      }
-    });
+    bScanDir = new JButton("Scan Directory");
     bScanDir.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        String path;
-        
-        path = "C:/1-Roman/Documents/8-test/list-test";
-        ScanDirectory scandir = new ScanDirectory(window);
-
+      public void actionPerformed(ActionEvent e) {                              // main processing directory action
+        ScanDirectory scandir = new ScanDirectory();
         scandir.processData();
         String text = scandir.text;
-
         taOutput.setText(text);
       }
     });
+    
+// ----------------------------------------------------- Main window layout -----------------------------------------------------
     
     JPanel pWrapper = new JPanel();
     GroupLayout gl = new GroupLayout(frame.getContentPane());
@@ -188,9 +228,7 @@ public class ListFoldersMain {
     );
     
     tfPath = new JTextField();
-    tfPath.setText("C:/1-Roman/Documents/8-test/list-test");
     tfPath.setMargin(new Insets(2, 5, 2, 2));
-    tfPath.setColumns(10);
     
     tfExportName = new JTextField();
     tfExportName.setMargin(new Insets(2, 5, 2, 2));
@@ -199,8 +237,9 @@ public class ListFoldersMain {
     JLabel lExportName = new JLabel("Export Name");
     
     JPanel pOptions = new JPanel();
-    
     JPanel pExports = new JPanel();
+    
+    JLabel lExportOptions = new JLabel("Export Options");
     
     chExportText = new JCheckBox("Export Text");
     chExportText.setMargin(new Insets(0, 0, 10, 0));
@@ -216,8 +255,10 @@ public class ListFoldersMain {
     chExportTree.setMargin(new Insets(0, 0, 10, 0));
     chExportTree.setIconTextGap(5);
     chExportTree.setHorizontalAlignment(SwingConstants.LEFT);
-    GroupLayout gl_pExports = new GroupLayout(pExports);
+
+// ----------------------------------------------------- Export options panel layout -----------------------------------------------------
     
+    GroupLayout gl_pExports = new GroupLayout(pExports);
     gl_pExports.setHorizontalGroup(
       gl_pExports.createParallelGroup(Alignment.LEADING)
         .addComponent(chExportText)
@@ -237,72 +278,82 @@ public class ListFoldersMain {
     gl_pExports.linkSize(SwingConstants.HORIZONTAL, new Component[] {chExportText, chExportMarkup, chExportTree});
     pExports.setLayout(gl_pExports);
     
+    JLabel lFilterExt = new JLabel("Filter Extensions");
     taFilterExt = new JTextArea();
     taFilterExt.setMargin(new Insets(5, 5, 5, 5));
-    
     taFilterExt.setLineWrap(true);
-    
     taFilterExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
     
-    JLabel lFilterExt = new JLabel("Filter Extensions");
-    
+    JLabel lExcludeExt = new JLabel("Exclude Extensions");
     taExcludeExt = new JTextArea();
     taExcludeExt.setLineWrap(true);
     taExcludeExt.setMargin(new Insets(5, 5, 5, 5));
     taExcludeExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
     
-    JLabel lExcludeExt = new JLabel("Exclude Extensions");
-    
+    JLabel lFilterDir = new JLabel("Filter Directories");
     taFilterDir = new JTextArea();
     taFilterDir.setLineWrap(true);
     taFilterDir.setMargin(new Insets(5, 5, 5, 5));
-    
     taFilterDir.setFont(new Font("Monospaced", Font.PLAIN, 12));
     
-    JLabel lFilterDir = new JLabel("Filter Directories");
+    pFilterExtScroll = new JScrollPane();
+    pExcludeExtScroll = new JScrollPane();
+    pFilterDirScroll = new JScrollPane();
+    pOutputScroll = new JScrollPane();
     
-    JLabel lExportOptions = new JLabel("Export Options");
+// ----------------------------------------------------- Options panel layout -----------------------------------------------------
+    
     GroupLayout gl_pOptions = new GroupLayout(pOptions);
-    
     gl_pOptions.setHorizontalGroup(
-      gl_pOptions.createSequentialGroup()
-        .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
-          .addComponent(pFilterExtScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-          .addComponent(lFilterExt, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        .addGap(15)
-        .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
-          .addComponent(pExcludeExtScroll)
-          .addComponent(lExcludeExt, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
-        .addGap(15)
-        .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
-          .addComponent(pFilterDirScroll, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(lFilterDir, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
-        .addGap(15)
-        .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING)
-          .addComponent(pExports, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-          .addComponent(lExportOptions, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE))
-    );
-
-    gl_pOptions.setVerticalGroup(
       gl_pOptions.createParallelGroup(Alignment.LEADING)
-        .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
+        .addGroup(gl_pOptions.createSequentialGroup()
+          .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
+            .addComponent(pFilterExtScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+            .addComponent(lFilterExt, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(bClearFilterExt, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addGap(15)
+          .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
+            .addComponent(pExcludeExtScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+            .addComponent(lExcludeExt, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+            .addComponent(bClearExcludeExt, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addGap(15)
+          .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
+            .addComponent(pFilterDirScroll)
+            .addComponent(lFilterDir, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+            .addComponent(bClearFilterDir, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addGap(15)
+          .addGroup(gl_pOptions.createParallelGroup(Alignment.LEADING, false)
+            .addComponent(pExports, GroupLayout.PREFERRED_SIZE, 99, GroupLayout.PREFERRED_SIZE)
+            .addComponent(lExportOptions, GroupLayout.PREFERRED_SIZE, 99, GroupLayout.PREFERRED_SIZE)
+            .addComponent(bToggleExports, GroupLayout.PREFERRED_SIZE, 99, GroupLayout.PREFERRED_SIZE)))
+    );
+    gl_pOptions.setVerticalGroup(
+      gl_pOptions.createParallelGroup(Alignment.TRAILING)
+        .addGroup(gl_pOptions.createSequentialGroup()
           .addComponent(lFilterExt)
           .addPreferredGap(ComponentPlacement.UNRELATED)
-          .addComponent(pFilterExtScroll, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
-        .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
+          .addComponent(pFilterExtScroll, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
+          .addPreferredGap(ComponentPlacement.UNRELATED)
+          .addComponent(bClearFilterExt, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+        .addGroup(gl_pOptions.createSequentialGroup()
           .addComponent(lExcludeExt)
           .addPreferredGap(ComponentPlacement.UNRELATED)
-          .addComponent(pExcludeExtScroll, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
-        .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
+          .addComponent(pExcludeExtScroll, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
+          .addPreferredGap(ComponentPlacement.UNRELATED)
+          .addComponent(bClearExcludeExt, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+        .addGroup(gl_pOptions.createSequentialGroup()
           .addComponent(lFilterDir)
           .addPreferredGap(ComponentPlacement.UNRELATED)
-          .addComponent(pFilterDirScroll, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
-        .addGroup(Alignment.TRAILING, gl_pOptions.createSequentialGroup()
+          .addComponent(pFilterDirScroll, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
+          .addPreferredGap(ComponentPlacement.UNRELATED)
+          .addComponent(bClearFilterDir, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+        .addGroup(gl_pOptions.createSequentialGroup()
           .addComponent(lExportOptions)
           .addPreferredGap(ComponentPlacement.UNRELATED)
-          .addComponent(pExports, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))
+          .addComponent(pExports, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
+          .addPreferredGap(ComponentPlacement.UNRELATED)
+          .addComponent(bToggleExports, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
     );
-      
     pOptions.setLayout(gl_pOptions);
     
     taOutput = new JTextArea();
@@ -310,8 +361,8 @@ public class ListFoldersMain {
     taOutput.setMargin(new Insets(5, 5, 5, 5));
     taOutput.setFont(new Font("Monospaced", Font.PLAIN, 12));
     
-    btnManageOptions = new JToggleButton("Manage Options");
-    btnManageOptions.addItemListener(new ItemListener() {
+    bManageOptions = new JToggleButton("Manage Options");
+    bManageOptions.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED){
           if(manOptDialog==null){
@@ -327,6 +378,8 @@ public class ListFoldersMain {
       }
     });
     
+// ----------------------------------------------------- External wrapper layout -----------------------------------------------------
+    
     GroupLayout gl_pWrapper = new GroupLayout(pWrapper);
     gl_pWrapper.setHorizontalGroup(
       gl_pWrapper.createParallelGroup(Alignment.LEADING)
@@ -337,7 +390,7 @@ public class ListFoldersMain {
         .addGroup(gl_pWrapper.createSequentialGroup()
           .addComponent(bScanDir, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
           .addPreferredGap(ComponentPlacement.RELATED, 236, Short.MAX_VALUE)
-          .addComponent(btnManageOptions))
+          .addComponent(bManageOptions))
         .addComponent(pOutputScroll, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
     );
     gl_pWrapper.setVerticalGroup(
@@ -353,12 +406,12 @@ public class ListFoldersMain {
           .addGap(18)
           .addGroup(gl_pWrapper.createParallelGroup(Alignment.BASELINE)
             .addComponent(bScanDir, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-            .addComponent(btnManageOptions))
+            .addComponent(bManageOptions))
           .addGap(18)
           .addComponent(pOutputScroll, GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
           .addContainerGap())
     );
-    gl_pWrapper.linkSize(SwingConstants.VERTICAL, new Component[] {btnManageOptions, bScanDir});
+    gl_pWrapper.linkSize(SwingConstants.VERTICAL, new Component[] {bManageOptions, bScanDir});
     gl_pWrapper.setAutoCreateGaps(true);
     gl_pWrapper.setAutoCreateContainerGaps(true);
     

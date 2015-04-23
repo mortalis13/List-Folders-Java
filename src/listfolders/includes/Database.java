@@ -41,10 +41,16 @@ public class Database {
     return conn;
   }
   
+  /*
+   * Adds or updates option in the 'options' table
+   */
   public void updateOption(String name, String value){
     updateOption(name, value, options_table);
   }
   
+  /*
+   * General update method
+   */
   public void updateOption(String name, String value, String dbtable){
     table=options_table;
     if(dbtable.length()!=0) table=dbtable;
@@ -72,10 +78,17 @@ public class Database {
     }
   }
   
+  /*
+   * Adds or updates last option in the 'config' table
+   * Redirects to the updateOption()
+   */
   public void updateConfig(String name, String value){
     updateOption(name,value,config_table);
   }
   
+  /*
+   * Loads last options from the database to assign them to the form fields
+   */
   public String loadLastOptions(){
     return getOption("last", config_table);
   }
@@ -84,6 +97,10 @@ public class Database {
     return getOption(name, options_table);
   }
   
+  /*
+   * Retrieves option from the database when an item is selected in the dropdown
+   * to load options set into the form fields
+   */
   public String getOption(String name, String table){
     sql="select value from "+table+" where name=?";
     
@@ -101,6 +118,9 @@ public class Database {
     }
   }
   
+  /*
+   * Loads all options from the database to show them in the dropdown
+   */
   public ArrayList<String> listOptions(){
     table=options_table;
     String key="name";
@@ -124,6 +144,9 @@ public class Database {
     }
   }
   
+  /*
+   * Removes option from the database
+   */
   public void removeOption(String name) {
     table=options_table;
     sql="delete from "+table+" where name=?";
@@ -137,6 +160,10 @@ public class Database {
     }
   }
   
+  /*
+   * Insert option into the database
+   * helper funtion for updateOption()
+   */
   public void addOption(String name, String value, String table) throws SQLException{
     sql="insert into "+table+" (name,value) values(?,?)";
     prep = conn.prepareStatement(sql);

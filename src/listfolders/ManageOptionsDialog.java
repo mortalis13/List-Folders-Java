@@ -2,7 +2,6 @@ package listfolders;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Window;
@@ -21,28 +20,30 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import listfolders.includes.Database;
 import listfolders.includes.Functions;
 import listfolders.includes.ManageOptions;
-
+import listfolders.includes.TopDashedBorder;
 
 public class ManageOptionsDialog extends JDialog {
 
   private JPanel contentPane;
   public JPanel panel;
   public JTextField tfName;
-  public JButton bAdd;
   public JComboBox cbList;
+  public JButton bAdd;
   public JButton bRemove;
-  
-  Functions fun;
-  Database db;
-  ListFoldersMain window;
-  ManageOptions manOpt;
   public JPanel pStatusBar;
   public JLabel lStatus;
+  
+  ListFoldersMain window;
+  Functions fun;
+  Database db;
+  ManageOptions manOpt;
 
   public ManageOptionsDialog(Window owner) {
     super(owner);
@@ -69,7 +70,7 @@ public class ManageOptionsDialog extends JDialog {
     tfName.setMargin(new Insets(2, 5, 2, 2));
     tfName.setColumns(10);
     
-    addWindowListener(new WindowAdapter() {
+    addWindowListener(new WindowAdapter() {                                     // Load options list
       @Override
       public void windowOpened(WindowEvent e) {
         manOpt=new ManageOptions();
@@ -78,7 +79,7 @@ public class ManageOptionsDialog extends JDialog {
     });
     
     bAdd = new JButton("Add");
-    bAdd.addActionListener(new ActionListener() {
+    bAdd.addActionListener(new ActionListener() {                                // Add option
       public void actionPerformed(ActionEvent e) { 
         String name=tfName.getText();
         manOpt.addOption(name);
@@ -88,7 +89,7 @@ public class ManageOptionsDialog extends JDialog {
     
     cbList = new JComboBox();
     cbList.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(ActionEvent e) {                                // Switch options
         String name=(String) cbList.getSelectedItem();
         manOpt.loadOption(name);
         
@@ -99,20 +100,17 @@ public class ManageOptionsDialog extends JDialog {
     });
     
     bRemove = new JButton("Remove");
-    bRemove.addActionListener(new ActionListener(){
+    bRemove.addActionListener(new ActionListener(){                                // Remove option
       public void actionPerformed(ActionEvent e){
         String name=(String) cbList.getSelectedItem();
         manOpt.removeOption(name);
       }
     });
     
-    pStatusBar = new JPanel(){
-      @Override
-      public void paintComponent(Graphics g){
-        fun.drawDashedBorder(g, this.getWidth());
-      }
-    };
-    pStatusBar.setBorder(new EmptyBorder(5, 5, 5, 5));
+    Border statusBorder=new CompoundBorder(new TopDashedBorder(), new EmptyBorder(5, 5, 5, 5));
+    
+    pStatusBar = new JPanel();
+    pStatusBar.setBorder(statusBorder);
     
     GroupLayout gl_panel = new GroupLayout(panel);
     gl_panel.setHorizontalGroup(
