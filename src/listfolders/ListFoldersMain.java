@@ -1,13 +1,16 @@
 package listfolders;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -17,12 +20,12 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -36,12 +39,15 @@ import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 
 import listfolders.includes.Database;
 import listfolders.includes.Functions;
 import listfolders.includes.ScanDirectory;
+import listfolders.includes.TopDashedBorder;
 
 
 public class ListFoldersMain {
@@ -64,6 +70,9 @@ public class ListFoldersMain {
   public JScrollPane pExcludeExtScroll;
   public JScrollPane pFilterDirScroll;
   public JScrollPane pOutputScroll;
+  
+  public JPanel pStatusBar;
+  public JLabel lStatus;
   
   public JToggleButton bManageOptions;
   public JButton bScanDir;
@@ -139,7 +148,15 @@ public class ListFoldersMain {
    * Initialize the contents of the frame.
    */
   private void initialize() {
-    frame = new JFrame();
+    frame = new JFrame("List Folders");
+    
+//    frame.setIconImage(Toolkit.getDefaultToolkit().getImage(ListFoldersMain.class.getResource("/com/sun/java/swing/plaf/windows/icons/HardDrive.gif")));
+    
+    List<Image> icons = new ArrayList<Image>();
+    icons.add(new ImageIcon("icons/icon16.png").getImage());
+    icons.add(new ImageIcon("icons/icon32.png").getImage());
+    frame.setIconImages(icons);
+    
     frame.addComponentListener(new ComponentAdapter() {
       @Override
       public void componentMoved(ComponentEvent e) {
@@ -244,6 +261,13 @@ public class ListFoldersMain {
         }else{
           manOptDialog.setVisible(false);
         }
+      }
+    });
+    
+    JButton bClearOutput=new JButton("Clear");
+    bClearOutput.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        taOutput.setText("");
       }
     });
     
@@ -395,12 +419,15 @@ public class ListFoldersMain {
     
     progressBar = new JProgressBar();
     
-    JButton bClearOutput=new JButton("Clear");
-    bClearOutput.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        taOutput.setText("");
-      }
-    });
+    lStatus = new JLabel(" ");
+    lStatus.setOpaque(true);
+    
+    Border statusBorder=new CompoundBorder(new TopDashedBorder(), new EmptyBorder(5, 5, 5, 5));
+    pStatusBar = new JPanel();
+    pStatusBar.setBorder(statusBorder);
+    
+    pStatusBar.setLayout(new BorderLayout());
+    pStatusBar.add(lStatus);
     
 // ----------------------------------------------------- External wrapper layout -----------------------------------------------------
     
@@ -421,6 +448,7 @@ public class ListFoldersMain {
           .addContainerGap(315, Short.MAX_VALUE))
         .addComponent(pOutputScroll, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(progressBar, 0, 480, Short.MAX_VALUE)
+        .addComponent(pStatusBar, 0, 480, Short.MAX_VALUE)
     );
     gl_pWrapper.setVerticalGroup(
       gl_pWrapper.createParallelGroup(Alignment.LEADING)
@@ -441,7 +469,11 @@ public class ListFoldersMain {
           .addComponent(pOutputScroll, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
           .addGap(10)
           .addComponent(progressBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-          .addContainerGap())
+          .addGap(10)
+          .addComponent(pStatusBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+          .addGap(0)
+          // .addContainerGap()
+          )
     );
     gl_pWrapper.linkSize(SwingConstants.VERTICAL, new Component[] {bScanDir, bManageOptions});
     gl_pWrapper.setAutoCreateGaps(true);

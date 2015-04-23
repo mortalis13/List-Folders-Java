@@ -54,6 +54,7 @@ public class ScanDirectory {
   int longestDirName=0;
   boolean scanCanceled=false;
   long prevTime=0;
+  int totalTime=0;
 
   String nl = "\n";
   String pad = "  ";
@@ -101,6 +102,7 @@ public class ScanDirectory {
     public void done(){
       window.bScanDir.setText("Scan Directory");
       window.bScanDir.setActionCommand("scan");
+      updateStatusBar("finish", null);
       
       if(text.length()==0 && doExportText) text="No Data!";
       window.taOutput.setText(text);
@@ -149,6 +151,10 @@ public class ScanDirectory {
         if (file.isDirectory() == true) {                       // directories
           String currentDir = "[" + value + "]";
           
+          if(level==0){
+            updateStatusBar("scanning", currentDir);
+          }
+          
           if(doExportText)
             text+=pad+currentDir+nl;
           if(doExportMarkup)
@@ -189,11 +195,10 @@ public class ScanDirectory {
     
     private void logStats(String currentDir, int progress){
       long currentTime=System.currentTimeMillis();
-      long time=currentTime-prevTime;
+      int time=(int) (currentTime-prevTime);
       prevTime=currentTime;
       
-      Formatter timeFormat=new Formatter();
-      timeFormat.format("%.2f", (float) time/1000);
+      String timeString=formatTime(time, "Time: %.2f s");
       
       int len=currentDir.length();
       int dif=longestDirName-len-2;
@@ -202,8 +207,31 @@ public class ScanDirectory {
       for(int i=0;i<dif;i++)
         spaces+=" ";
       
-      System.out.print(currentDir+spaces+"\t Time: "+timeFormat+" s ");
+      totalTime+=time;
+      
+      System.out.print(currentDir+spaces+"\t "+timeString);
       System.out.println("\t Dir: "+dirCount+"/"+rootDirCount+" \t progress: "+progress+"%");
+    }
+    
+    private void updateStatusBar(String type, String currentDir){
+      String text="";
+      
+      switch(type){
+        case "scanning":
+          text="Scanning: "+currentDir;
+          break;
+        case "finish":
+          String time=formatTime(totalTime, "(time: %.2f s)");
+          text="Scanning finished "+time;
+          break;
+      }
+      window.lStatus.setText(text);
+    }
+    
+    private String formatTime(int time, String format){
+      Formatter timeFormat=new Formatter();
+      timeFormat.format(format, (float) time/1000);
+      return timeFormat.toString();
     }
 
   }
