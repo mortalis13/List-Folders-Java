@@ -22,6 +22,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import tests.DashedBorder.DashedLineIcon;
+import javax.swing.JProgressBar;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 class CustomBorder implements Border{ 
   
@@ -57,6 +59,7 @@ public class TestDialog extends JDialog {
   private final JPanel contentPanel = new JPanel();
   private JLabel lStatus;
   public JPanel panel;
+  public JProgressBar progressBar;
 
   /**
    * Launch the application.
@@ -120,18 +123,24 @@ public class TestDialog extends JDialog {
     FlowLayout flowLayout = (FlowLayout) panel.getLayout();
     flowLayout.setAlignment(FlowLayout.LEFT);
     
+    progressBar = new JProgressBar();
+    
     GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
     gl_contentPanel.setHorizontalGroup(
-      gl_contentPanel.createParallelGroup(Alignment.LEADING)
-        .addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
+      gl_contentPanel.createParallelGroup(Alignment.TRAILING)
+        .addGroup(gl_contentPanel.createSequentialGroup()
           .addContainerGap()
-          .addComponent(panel, GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+          .addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
+            .addComponent(progressBar, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+            .addComponent(panel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE))
           .addContainerGap())
     );
     gl_contentPanel.setVerticalGroup(
       gl_contentPanel.createParallelGroup(Alignment.TRAILING)
         .addGroup(gl_contentPanel.createSequentialGroup()
-          .addContainerGap(178, Short.MAX_VALUE)
+          .addContainerGap()
+          .addComponent(progressBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+          .addPreferredGap(ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
           .addComponent(panel, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)
           .addContainerGap())
     );

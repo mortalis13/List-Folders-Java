@@ -1,0 +1,13 @@
+[folder1]
+  file1.txt
+  file2.txt
+  file3.txt
+  install.msi
+  prog.exe
+[folder2]
+  archive.zip
+  file1.txt
+  video.avi
+[folder3]
+file1.txt
+file2.txt

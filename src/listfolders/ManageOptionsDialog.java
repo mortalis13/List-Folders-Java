@@ -17,6 +17,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
@@ -40,6 +41,8 @@ public class ManageOptionsDialog extends JDialog {
   public JPanel pStatusBar;
   public JLabel lStatus;
   
+  private boolean switchAfterAdd;
+  
   ListFoldersMain window;
   Functions fun;
   Database db;
@@ -47,6 +50,7 @@ public class ManageOptionsDialog extends JDialog {
 
   public ManageOptionsDialog(Window owner) {
     super(owner);
+    setResizable(false);
     
     window=ListFoldersMain.window;
     fun=ListFoldersMain.fun;
@@ -83,6 +87,7 @@ public class ManageOptionsDialog extends JDialog {
       public void actionPerformed(ActionEvent e) { 
         String name=tfName.getText();
         manOpt.addOption(name);
+        switchAfterAdd=true;
         cbList.setSelectedItem(name);
       }
     });
@@ -93,9 +98,12 @@ public class ManageOptionsDialog extends JDialog {
         String name=(String) cbList.getSelectedItem();
         manOpt.loadOption(name);
         
-        int count=cbList.getItemCount();
-        tfName.setText(name);
-        lStatus.setText(count+" options loaded");
+        if(!switchAfterAdd){
+          int count=cbList.getItemCount();
+          tfName.setText(name);
+          lStatus.setText(count+" options loaded");
+        }else
+          switchAfterAdd=false;
       }
     });
     
@@ -108,7 +116,6 @@ public class ManageOptionsDialog extends JDialog {
     });
     
     Border statusBorder=new CompoundBorder(new TopDashedBorder(), new EmptyBorder(5, 5, 5, 5));
-    
     pStatusBar = new JPanel();
     pStatusBar.setBorder(statusBorder);
     
@@ -142,7 +149,7 @@ public class ManageOptionsDialog extends JDialog {
           .addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
             .addComponent(cbList, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
             .addComponent(bRemove, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-          .addPreferredGap(ComponentPlacement.RELATED, 165, Short.MAX_VALUE)
+          .addPreferredGap(ComponentPlacement.UNRELATED, 30, Short.MAX_VALUE)
           .addComponent(pStatusBar, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
     );
     gl_panel.linkSize(SwingConstants.VERTICAL, new Component[] {tfName, bAdd, cbList, bRemove});

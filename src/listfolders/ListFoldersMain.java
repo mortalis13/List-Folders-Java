@@ -17,12 +17,10 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Enumeration;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.concurrent.ExecutionException;
 
-import javax.swing.AbstractButton;
-import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
-import javax.swing.DefaultButtonModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -30,6 +28,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -37,14 +36,16 @@ import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 
 import listfolders.includes.Database;
 import listfolders.includes.Functions;
 import listfolders.includes.ScanDirectory;
 
-public class ListFoldersMain {
 
+public class ListFoldersMain {
+  
   JFrame frame;
   
   public JTextArea taFilterExt;
@@ -76,9 +77,11 @@ public class ListFoldersMain {
   public static Database db;
   public static Functions fun;
   public static ManageOptionsDialog manOptDialog;
+  public static ScanDirectory scandir;
   
+  public JProgressBar progressBar;
   public Dialog dialog;
-
+  
   /**
    * Launch the application.
    */
@@ -159,7 +162,7 @@ public class ListFoldersMain {
         fun.loadFields();
       }
     });
-    frame.setBounds(0, 0, 516, 600);
+    frame.setBounds(0, 0, 516, 707);
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     
     addKeyboardManager();                                                     // global keyboard shortcuts
@@ -205,12 +208,42 @@ public class ListFoldersMain {
     });
     
     bScanDir = new JButton("Scan Directory");
+    bScanDir.setActionCommand("scan");
     bScanDir.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {                              // main processing directory action
-        ScanDirectory scandir = new ScanDirectory();
-        scandir.processData();
-        String text = scandir.text;
-        taOutput.setText(text);
+        String command=e.getActionCommand();
+        
+        switch(command){
+        case "scan":
+          scandir = new ScanDirectory();
+          scandir.startScan();
+          break;
+        case "stop":
+          scandir.stopScan();
+          break;
+        }
+        
+//        scandir.processData();
+//        String text = scandir.text;
+//        taOutput.setText(text);
+        
+      }
+    });
+    
+    bManageOptions = new JToggleButton("Manage Options");
+    bManageOptions.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        if (e.getStateChange() == ItemEvent.SELECTED){
+          if(manOptDialog==null){
+            // System.out.println("runManOptDialog");
+            manOptDialog = new ManageOptionsDialog(frame);
+          }
+          manOptDialog.pack();
+          fun.stickWindow(frame, manOptDialog);
+          manOptDialog.setVisible(true);
+        }else{
+          manOptDialog.setVisible(false);
+        }
       }
     });
     
@@ -234,11 +267,10 @@ public class ListFoldersMain {
     tfExportName.setMargin(new Insets(2, 5, 2, 2));
     tfExportName.setPreferredSize(new Dimension(150, 20));
     
-    JLabel lExportName = new JLabel("Export Name");
-    
     JPanel pOptions = new JPanel();
     JPanel pExports = new JPanel();
     
+    JLabel lExportName = new JLabel("Export Name");
     JLabel lExportOptions = new JLabel("Export Options");
     
     chExportText = new JCheckBox("Export Text");
@@ -361,20 +393,12 @@ public class ListFoldersMain {
     taOutput.setMargin(new Insets(5, 5, 5, 5));
     taOutput.setFont(new Font("Monospaced", Font.PLAIN, 12));
     
-    bManageOptions = new JToggleButton("Manage Options");
-    bManageOptions.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        if (e.getStateChange() == ItemEvent.SELECTED){
-          if(manOptDialog==null){
-            // System.out.println("runManOptDialog");
-            manOptDialog = new ManageOptionsDialog(frame);
-          }
-          manOptDialog.pack();
-          fun.stickWindow(frame, manOptDialog);
-          manOptDialog.setVisible(true);
-        }else{
-          manOptDialog.setVisible(false);
-        }
+    progressBar = new JProgressBar();
+    
+    JButton bClearOutput=new JButton("Clear");
+    bClearOutput.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        taOutput.setText("");
       }
     });
     
@@ -386,12 +410,17 @@ public class ListFoldersMain {
         .addComponent(tfPath, 0, 480, Short.MAX_VALUE)
         .addComponent(pOptions, 0, 480, Short.MAX_VALUE)
         .addComponent(lExportName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-        .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
         .addGroup(gl_pWrapper.createSequentialGroup()
           .addComponent(bScanDir, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
-          .addPreferredGap(ComponentPlacement.RELATED, 236, Short.MAX_VALUE)
+          .addPreferredGap(ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+          .addComponent(bClearOutput, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
+          .addPreferredGap(ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
           .addComponent(bManageOptions))
+        .addGroup(gl_pWrapper.createSequentialGroup()
+          .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
+          .addContainerGap(315, Short.MAX_VALUE))
         .addComponent(pOutputScroll, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(progressBar, 0, 480, Short.MAX_VALUE)
     );
     gl_pWrapper.setVerticalGroup(
       gl_pWrapper.createParallelGroup(Alignment.LEADING)
@@ -401,17 +430,20 @@ public class ListFoldersMain {
           .addComponent(pOptions, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
           .addGap(18)
           .addComponent(lExportName)
-          .addGap(6)
+          .addPreferredGap(ComponentPlacement.RELATED)
           .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
           .addGap(18)
-          .addGroup(gl_pWrapper.createParallelGroup(Alignment.BASELINE)
-            .addComponent(bScanDir, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-            .addComponent(bManageOptions))
+          .addGroup(gl_pWrapper.createParallelGroup(Alignment.LEADING)
+            .addComponent(bScanDir, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+            .addComponent(bClearOutput, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+            .addComponent(bManageOptions, Alignment.TRAILING))
           .addGap(18)
-          .addComponent(pOutputScroll, GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+          .addComponent(pOutputScroll, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+          .addGap(10)
+          .addComponent(progressBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
           .addContainerGap())
     );
-    gl_pWrapper.linkSize(SwingConstants.VERTICAL, new Component[] {bManageOptions, bScanDir});
+    gl_pWrapper.linkSize(SwingConstants.VERTICAL, new Component[] {bScanDir, bManageOptions});
     gl_pWrapper.setAutoCreateGaps(true);
     gl_pWrapper.setAutoCreateContainerGaps(true);
     

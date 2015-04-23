@@ -1,0 +1,7 @@
+[espa?ol]
+  [colores]
+    WinCmdRef.chw
+  [l?piz]
+    WinCmdRef.chw
+  WinCmdRef.chm
+  WinCmdRef.chw

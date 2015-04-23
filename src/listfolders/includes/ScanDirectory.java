@@ -1,15 +1,21 @@
 package listfolders.includes;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Formatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.SwingWorker;
 
 import listfolders.ListFoldersMain;
 import listfolders.includes.tree.DirNode;
@@ -20,10 +26,12 @@ import com.google.gson.Gson;
 
 public class ScanDirectory {
   Functions fun;
+  ListFoldersMain window;
+  ScanWorker worker;
   
-  String path;
+  public String path;
 
-  public String text;
+  public String text="";
   String markup;
   String json;
 
@@ -40,6 +48,12 @@ public class ScanDirectory {
   boolean doExportTree;
   
   String exportName;
+  
+  int dirCount=0;
+  int rootDirCount=0;
+  int longestDirName=0;
+  boolean scanCanceled=false;
+  long prevTime=0;
 
   String nl = "\n";
   String pad = "  ";
@@ -64,10 +78,124 @@ public class ScanDirectory {
     "mkv", "flv", "vob", "avi", "wmv",
     "mov", "mp4", "mpg", "mpeg", "3gp",
   };
+  
+  
+  class ScanWorker extends SwingWorker<Void, Integer> implements PropertyChangeListener{
+
+    public Void doInBackground() {
+      setProgress(0);
+      prevTime=System.currentTimeMillis();
+      window.bScanDir.setText("Stop");
+      window.bScanDir.setActionCommand("stop");
+      window.taOutput.setText("");
+      
+      jsonArray = fullScan(path, 0);
+      return null;
+    }
+    
+    public void done(){
+      window.bScanDir.setText("Scan Directory");
+      window.bScanDir.setActionCommand("scan");
+      
+      if(text.length()==0) text="No Data!";
+      window.taOutput.setText(text);
+      
+      if(scanCanceled){
+        window.progressBar.setValue(0);
+      }
+    }
+    
+    protected void process(List<Integer> list){
+      int processedCount=list.get(0);
+      setProgress(Math.min(processedCount, 100));
+    }
+    
+    public void propertyChange(PropertyChangeEvent evt) {
+      if ("progress" == evt.getPropertyName()) {
+        int progress = (Integer) evt.getNewValue();
+        window.progressBar.setValue(progress);
+      } 
+    }
+    
+    public ArrayList<TreeNode> fullScan(String dir, int level) {
+      if(scanCanceled) return null;
+      
+      ArrayList<TreeNode> json, res;
+      ArrayList<String> list;
+      String[] data;
+      String pad;
+      File file;
+
+      json = new ArrayList<TreeNode>();                               // json is recursive tree structure needed for the jsTree plugin
+
+      file = new File(dir);
+      data = file.list();                                             // get string list of files in the current level directory
+      if(level==0)
+        list = getInitialData(data);
+      else
+        list = prepareData(data, dir);
+      pad = getPadding(level);
+      
+      for (String value : list) {
+        TreeNode node;
+        String item = dir + '/' + value;
+        file = new File(item);
+        
+        if (file.isDirectory() == true) {                       // directories
+          String currentDir = "[" + value + "]";
+          text+=pad + currentDir+nl;
+
+          res = fullScan(item, level + 1);                      // recursive scan
+          if(res==null) return null;
+          
+          node = new DirNode(value, res);
+          json.add(node);
+          
+          if(level==0){
+            dirCount++;
+            int progress=(int) ((float) dirCount/rootDirCount*100);
+            publish(progress);
+            
+            logStats(currentDir, progress);
+          }
+        } else {                                                // files
+          String currentFile = value;
+          text+=pad+currentFile+nl;
+          
+          node = new FileNode(value, getIcon(value));
+          json.add(node);
+        }
+      }
+
+      return json;
+    }
+    
+    private void logStats(String currentDir, int progress){
+      long currentTime=System.currentTimeMillis();
+      long time=currentTime-prevTime;
+      prevTime=currentTime;
+      
+      Formatter timeFormat=new Formatter();
+      timeFormat.format("%.2f", (float) time/1000);
+      
+      int len=currentDir.length();
+      int dif=longestDirName-len-2;
+      
+      String spaces="";
+      for(int i=0;i<dif;i++)
+        spaces+=" ";
+      
+      System.out.print(currentDir+spaces+"\t Time: "+timeFormat+" s ");
+      System.out.println("\t Dir: "+dirCount+"/"+rootDirCount+" \t progress: "+progress+"%");
+    }
+
+  }
+  
 
   public ScanDirectory() {
     String filterExtText, excludeExtText, filterDirText;
     fun=new Functions();
+    window=ListFoldersMain.window;
     
     textArray = new ArrayList<String>();
     markupArray = new ArrayList<String>();
@@ -76,6 +204,7 @@ public class ScanDirectory {
     
     path=(String)fields.get("path");
     path=formatPath(path);
+    window.tfPath.setText(path);
     
     filterExtText=(String)fields.get("filterExt");
     excludeExtText=(String)fields.get("excludeExt");
@@ -98,19 +227,37 @@ public class ScanDirectory {
    * Exports result if checkboxes are selected
    */
   public void processData() {                                   // << Start point >>
-    jsonArray = fullScan(path, -1);
-
-    if(textArray.size()==0){
-      text="No Data!";
-      return;
-    }
     
-    text = join(textArray, "\n");                                 // internal join() method
-    markup = join(markupArray, "\n");
+//    worker = new ScanWorker();
+//    worker.execute();
+    
+//    jsonArray = fullScan(path, -1);
+    
+//    startScan();
 
-    if(doExportText) exportText();
-    if(doExportMarkup) exportMarkup();
-    if(doExportTree) exportTree();
+//    if(textArray.size()==0){
+//      text="No Data!";
+//      return;
+//    }
+//    
+//    text = join(textArray, "\n");                                 // internal join() method
+//    markup = join(markupArray, "\n");
+//
+//    if(doExportText) exportText();
+//    if(doExportMarkup) exportMarkup();
+//    if(doExportTree) exportTree();
+  }
+  
+  public void startScan(){
+    scanCanceled=false;
+    worker=new ScanWorker();
+    worker.addPropertyChangeListener(worker);
+    worker.execute();
+  }
+  
+  public void stopScan(){
+    scanCanceled=true;
+    worker.cancel(true);
   }
   
   /*
@@ -122,7 +269,7 @@ public class ScanDirectory {
     String[] data;
     String pad;
     File file;
-    
+
     json = new ArrayList<TreeNode>();                               // json is recursive tree structure needed for the jsTree plugin
 
     file = new File(dir);
@@ -134,21 +281,21 @@ public class ScanDirectory {
       TreeNode node;
       String item = dir + '/' + value;
       file = new File(item);
-
+      
       if (file.isDirectory() == true) {                       // directories
         boolean passed=true;
         if(filterDir.size()!=0 && level==-1){                 // filter directories
           passed=filterDirectory(value);                 
         }
         if(!passed) continue;
-          
+        
         String currentDir = "[" + value + "]";
 
         textArray.add(pad + currentDir);                      // add text and markup lines to arrays
         markupArray.add(wrapDir(pad + currentDir));
 
         res = fullScan(item, level + 1);                      // recursive scan
-
+        
         node = new DirNode(value, res);
         json.add(node);
       } else {                                                // files
@@ -185,6 +332,32 @@ public class ScanDirectory {
         files.add(value);
       }
     }
+    
+    list = getList(folders, files);
+    return list;
+  }
+  
+  public ArrayList<String> getInitialData(String[] data) {
+    ArrayList<String> folders = new ArrayList<String>(), 
+    files = new ArrayList<String>(), list;
+    int longest=0;
+    
+    for (String value : data) {
+      String item = path + '/' + value;
+      File f = new File(item);
+
+      if (f.isDirectory() == true) {                    // add directories
+        if(filterDir.size()!=0 && !filterDirectory(value)) continue;
+        folders.add(value);
+        if(value.length()>longest)
+          longest=value.length();
+      } else if (filterFile(value)) {                   // filter files and add
+        files.add(value);
+      }
+    }
+    
+    rootDirCount=folders.size();
+    longestDirName=longest;
 
     list = getList(folders, files);
     return list;
@@ -210,10 +383,24 @@ public class ScanDirectory {
     path=path.trim();
     
     int last=path.length()-1;
-    if(path.substring(last)=="/")
+    if(path.substring(last).equals("/"))
       path=path.substring(0,last);
     
     return path;
+  }
+  
+  /*
+   * Converts string to UTF-8 encoding
+   */
+  public String fixEncoding(String value){
+    String fix=value;
+    try {
+//       fix = new String(value.getBytes(), "UTF-8");
+      fix = new String(value.getBytes("UTF-8"));
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+    return fix;
   }
 
   /*
@@ -232,7 +419,7 @@ public class ScanDirectory {
     BufferedReader br = null;
 
     try {
-      br = new BufferedReader(new FileReader("templates/tree.html"));               // read by lines
+      br = new BufferedReader(new FileReader(tmpl));               // read by lines
       while ((line = br.readLine()) != null) {
         doc += line+nl;
       }
@@ -275,7 +462,7 @@ public class ScanDirectory {
    */
   public String getPadding(int level) {
     String resPad = "";
-    for (int i = 0; i <= level; i++) {
+    for (int i = 0; i < level; i++) {
       resPad += pad;
     }
     return resPad;
@@ -349,8 +536,10 @@ public class ScanDirectory {
    */
   public String join(ArrayList<String> array, String separator) {
     String res = "";
-    for(int i=0;i<array.size();i++){
-      if(i==array.size()-1)
+    int size=array.size();
+    
+    for(int i=0;i<size;i++){
+      if(i==size-1)
         separator="";
       res += array.get(i) + separator;
     }
@@ -470,12 +659,15 @@ public class ScanDirectory {
    */
   private void exportText() {
     File file;
-    String exportPath, fileName, ext;
+    String exportPath, fileName, ext, text;
 
     exportPath = "export/text/";
     ext=".txt";
     fileName = getExportName(ext);
     fileName = exportPath + fileName;
+    
+    text=this.text;
+    text=fixEncoding(text);
     
     writeFile(fileName,text);
   }
@@ -485,13 +677,14 @@ public class ScanDirectory {
    */
   private void exportMarkup() {
     File file;
-    String exportPath, fileName, ext;
+    String exportPath, fileName, ext, markup;
 
     exportPath = "export/markup/";
     ext=".html";
     fileName = getExportName(ext);
     fileName = exportPath + fileName;
-    markup = wrapMarkup(markup);
+    markup = wrapMarkup(this.markup);
+    markup=fixEncoding(markup);
 
     writeFile(fileName, markup);
   }
@@ -513,6 +706,7 @@ public class ScanDirectory {
     
     Gson gson = new Gson();
     String json = gson.toJson(jsonArray);
+    json=fixEncoding(json);
 
     treeName=getExportName(null);                                         // get name
     
@@ -548,6 +742,11 @@ public class ScanDirectory {
     String exportName, name;
     
     exportName="no-name";
+    
+    if(this.exportName.length()!=0){
+      exportName=this.exportName;
+      useCurrentDir=false;
+    }
     
     if(useCurrentDir){
       Pattern pat=Pattern.compile("/[^/]+$");
