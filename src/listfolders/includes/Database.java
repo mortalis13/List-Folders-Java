@@ -32,10 +32,9 @@ public class Database {
     try {
       Class.forName(driver);
       conn = DriverManager.getConnection(url,"root","");
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      System.out.println("No Connection: createConnection()");
+      return null;
     }
 
     return conn;
@@ -58,6 +57,7 @@ public class Database {
     sql="select name from "+table+" where name=?";
     
     try {
+      if(conn==null) return;
       prep = conn.prepareStatement(sql);
       prep.setString(1, name);
       
@@ -73,8 +73,8 @@ public class Database {
       prep.setString(1, value);
       prep.setString(2, name);
       prep.execute();
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      System.out.println("Error in SQL query (updateOption()): "+e.getMessage());
     }
   }
   
@@ -105,15 +105,15 @@ public class Database {
     sql="select value from "+table+" where name=?";
     
     try {
+      if(conn==null) return null;
       prep = conn.prepareStatement(sql);
       prep.setString(1, name);
       rs=prep.executeQuery();
       
       if(!rs.next()) return null;
       return rs.getString(1);
-      
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      System.out.println("Error in SQL query (getOption()): "+e.getMessage());
       return null;
     }
   }
@@ -129,6 +129,7 @@ public class Database {
     sql="select "+key+" from "+table+" order by "+key+" asc";
     
     try {
+      if(conn==null) return null;
       st = conn.createStatement();
       rs=st.executeQuery(sql);
       
@@ -138,8 +139,8 @@ public class Database {
       if(list.size()==0) return null;
       return list;
       
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      System.out.println("Error in SQL query (listOptions()): "+e.getMessage());
       return null;
     }
   }
@@ -152,11 +153,13 @@ public class Database {
     sql="delete from "+table+" where name=?";
     
     try {
+      if(conn==null) return;
       prep = conn.prepareStatement(sql);
       prep.setString(1, name);
       prep.execute();
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      System.out.println("Error in SQL query (removeOption()): "+e.getMessage());
+      return;
     }
   }
   

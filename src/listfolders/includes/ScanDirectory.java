@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
+import java.util.regex.Matcher; 
 import java.util.regex.Pattern;
 
 import javax.swing.SwingWorker;
@@ -104,6 +104,8 @@ public class ScanDirectory {
       window.bScanDir.setActionCommand("scan");
       updateStatusBar("finish", null);
       
+      window.progressBar.setValue(100);
+      
       if(text.length()==0 && doExportText) text="No Data!";
       window.taOutput.setText(text);
       
@@ -118,7 +120,7 @@ public class ScanDirectory {
     }
     
     public void propertyChange(PropertyChangeEvent evt) {
-      if ("progress" == evt.getPropertyName()) {
+      if ("progress" == evt.getPropertyName() && !isDone()) {
         int progress = (Integer) evt.getNewValue();
         window.progressBar.setValue(progress);
       } 
@@ -498,13 +500,12 @@ public class ScanDirectory {
     path=iconsPath;
     iconExt=".png";
     
-    Pattern pat=Pattern.compile("\\.[\\w]+$");
+    Pattern pat=Pattern.compile("\\.([\\w]+)$");                  // find ext without dot
     Matcher mat=pat.matcher(file);
     
     if(!mat.find()) return icon;                                // first run find() then get results
     
-    ext=mat.group();                                            // string result
-    ext=ext.substring(1);
+    ext=mat.group(1);                                            // string result
     
     if(useDefault){                                             // process different types of extensions
       for(String item : exts){
@@ -767,12 +768,11 @@ public class ScanDirectory {
     }
     
     if(useCurrentDir){
-      Pattern pat=Pattern.compile("/[^/]+$");
+      Pattern pat=Pattern.compile("/([^/]+)$");
       Matcher mat=pat.matcher(path);
       
       if(mat.find()){
-        exportName=mat.group();
-        exportName=exportName.substring(1);
+        exportName=mat.group(1);
       }
     }
     

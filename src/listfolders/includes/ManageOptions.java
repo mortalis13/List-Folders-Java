@@ -16,7 +16,7 @@ public class ManageOptions {
   
   public ManageOptions(){
     window=ListFoldersMain.window;
-    dialog=ListFoldersMain.manOptDialog;
+    dialog=window.manOptDialog;
     fun=ListFoldersMain.fun;
     db=ListFoldersMain.db;
   }

@@ -79,6 +79,12 @@ public class ManageOptionsDialog extends JDialog {
       public void windowOpened(WindowEvent e) {
         manOpt=new ManageOptions();
         manOpt.listOptions();
+        fun.addShortcut(getRootPane(), "closeManOpt");
+      }
+      
+      @Override
+      public void windowClosed(WindowEvent e) {
+        window.bManageOptions.setSelected(false);
       }
     });
     

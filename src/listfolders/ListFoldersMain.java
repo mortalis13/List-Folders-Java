@@ -10,7 +10,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -21,13 +20,18 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -36,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -48,11 +53,12 @@ import listfolders.includes.Database;
 import listfolders.includes.Functions;
 import listfolders.includes.ScanDirectory;
 import listfolders.includes.TopDashedBorder;
+import listfolders.treeviwer.TreeViewerWindow;
 
 
 public class ListFoldersMain {
   
-  JFrame frame;
+  public JFrame frame;
   
   public JTextArea taFilterExt;
   public JTextArea taExcludeExt;
@@ -76,20 +82,22 @@ public class ListFoldersMain {
   
   public JToggleButton bManageOptions;
   public JButton bScanDir;
+  public JButton bTreeViewer;
   
   public JButton bClearFilterExt;
   public JButton bClearExcludeExt;
   public JButton bClearFilterDir;
   public JButton bToggleExports;
   
+  public JProgressBar progressBar;
+  public Dialog dialog;
+  public TreeViewerWindow treeViewerWindow;
+  public ManageOptionsDialog manOptDialog;
+  
   public static ListFoldersMain window;
   public static Database db;
   public static Functions fun;
-  public static ManageOptionsDialog manOptDialog;
   public static ScanDirectory scandir;
-  
-  public JProgressBar progressBar;
-  public Dialog dialog;
   
   /**
    * Launch the application.
@@ -124,7 +132,7 @@ public class ListFoldersMain {
           SwingUtilities.invokeLater( new Runnable() {
             @Override
             public void run() {
-              frame.dispose();
+              // frame.dispose();
              // System.exit(0);
             }
           } );
@@ -149,8 +157,7 @@ public class ListFoldersMain {
    */
   private void initialize() {
     frame = new JFrame("List Folders");
-    
-//    frame.setIconImage(Toolkit.getDefaultToolkit().getImage(ListFoldersMain.class.getResource("/com/sun/java/swing/plaf/windows/icons/HardDrive.gif")));
+//    addKeyboardManager();                                                     // global keyboard shortcuts
     
     List<Image> icons = new ArrayList<Image>();
     icons.add(new ImageIcon("icons/icon16.png").getImage());
@@ -171,19 +178,22 @@ public class ListFoldersMain {
         db.updateConfig("last",value);
         if(manOptDialog!=null)
           manOptDialog.dispose();
+        if(treeViewerWindow!=null)
+          treeViewerWindow.frame.dispose();
       }
       @Override
       public void windowOpened(WindowEvent e) {                             // assign static objects for use in other classes
         db=new Database();                                                  // and load last saved fields from the DB
         fun=new Functions();
         fun.loadFields();
+        
+        fun.addShortcut(frame.getRootPane(), "exit");
+        fun.addShortcut(bScanDir, "scan");
       }
     });
     frame.setBounds(0, 0, 516, 707);
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    
-    addKeyboardManager();                                                     // global keyboard shortcuts
-    
+
     bClearFilterExt = new JButton("Clear");
     bClearExcludeExt = new JButton("Clear");
     bClearFilterDir = new JButton("Clear");
@@ -240,19 +250,25 @@ public class ListFoldersMain {
           break;
         }
         
-//        scandir.processData();
-//        String text = scandir.text;
-//        taOutput.setText(text);
-        
       }
     });
+    
+    bTreeViewer=new JButton("Tree View");
+    bTreeViewer.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if(treeViewerWindow==null){
+          treeViewerWindow = new TreeViewerWindow();
+        }
+        treeViewerWindow.frame.setVisible(true);
+      }
+    });
+    
     
     bManageOptions = new JToggleButton("Manage Options");
     bManageOptions.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED){
           if(manOptDialog==null){
-            // System.out.println("runManOptDialog");
             manOptDialog = new ManageOptionsDialog(frame);
           }
           manOptDialog.pack();
@@ -438,14 +454,15 @@ public class ListFoldersMain {
         .addComponent(pOptions, 0, 480, Short.MAX_VALUE)
         .addComponent(lExportName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
         .addGroup(gl_pWrapper.createSequentialGroup()
-          .addComponent(bScanDir, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
+          .addComponent(bScanDir, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
           .addPreferredGap(ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
           .addComponent(bClearOutput, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
           .addPreferredGap(ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
           .addComponent(bManageOptions))
         .addGroup(gl_pWrapper.createSequentialGroup()
           .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
-          .addContainerGap(315, Short.MAX_VALUE))
+          .addPreferredGap(ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+          .addComponent(bTreeViewer))
         .addComponent(pOutputScroll, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(progressBar, 0, 480, Short.MAX_VALUE)
         .addComponent(pStatusBar, 0, 480, Short.MAX_VALUE)
@@ -459,7 +476,11 @@ public class ListFoldersMain {
           .addGap(18)
           .addComponent(lExportName)
           .addPreferredGap(ComponentPlacement.RELATED)
-          .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
+          
+          .addGroup(gl_pWrapper.createParallelGroup(Alignment.LEADING)
+            .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
+            .addComponent(bTreeViewer, Alignment.TRAILING))
+          
           .addGap(18)
           .addGroup(gl_pWrapper.createParallelGroup(Alignment.LEADING)
             .addComponent(bScanDir, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
@@ -475,7 +496,8 @@ public class ListFoldersMain {
           // .addContainerGap()
           )
     );
-    gl_pWrapper.linkSize(SwingConstants.VERTICAL, new Component[] {bScanDir, bManageOptions});
+    gl_pWrapper.linkSize(SwingConstants.VERTICAL, new Component[] {bScanDir, bManageOptions, bTreeViewer});
+    gl_pWrapper.linkSize(SwingConstants.HORIZONTAL, new Component[] {bScanDir, bManageOptions, bTreeViewer});
     gl_pWrapper.setAutoCreateGaps(true);
     gl_pWrapper.setAutoCreateContainerGaps(true);
     
@@ -486,5 +508,7 @@ public class ListFoldersMain {
     
     pWrapper.setLayout(gl_pWrapper);
     frame.getContentPane().setLayout(gl);
+    
   }
+  
 }

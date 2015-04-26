@@ -1,13 +1,17 @@
 package listfolders.includes;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Window;
-import java.awt.geom.Line2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import listfolders.ListFoldersMain;
 
@@ -19,9 +23,77 @@ public class Functions {
   ListFoldersMain window;
   Database db;
   
+  public HashMap<String, Action> shortcuts;
+  public HashMap<String, KeyStroke> actionStrokes;
+  
+  Action exitAction = new AbstractAction() {
+    public void actionPerformed(ActionEvent actionEvent) {
+      window.frame.dispose();
+    }
+  };
+  
+  Action exitTreeViewer = new AbstractAction() {
+    public void actionPerformed(ActionEvent actionEvent) {
+      window.treeViewerWindow.frame.dispose();
+    }
+  };
+  
+  Action closeManOpt = new AbstractAction() {
+    public void actionPerformed(ActionEvent actionEvent) {
+      window.manOptDialog.dispose();
+    }
+  };
+  
+  Action scanAction = new AbstractAction() {
+    public void actionPerformed(ActionEvent actionEvent) {
+      window.bScanDir.doClick();
+    }
+  };
+  
   public Functions(){
     window=ListFoldersMain.window;
     db=ListFoldersMain.db;
+    
+    shortcuts=new HashMap<String, Action>();
+    actionStrokes=new HashMap<String, KeyStroke>();
+    
+    setShortcuts();
+  }
+  
+  private void setShortcuts(){
+    KeyStroke stroke;
+    String comm;
+    
+    stroke=KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
+    comm="exit";
+    shortcuts.put(comm, exitAction);
+    actionStrokes.put(comm, stroke);
+    
+    comm="exitTreeViewer";
+    shortcuts.put(comm, exitTreeViewer);
+    actionStrokes.put(comm, stroke);
+    
+    comm="closeManOpt";
+    shortcuts.put(comm, closeManOpt);
+    actionStrokes.put(comm, stroke);
+    
+    stroke=KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK);
+    comm="scan";
+    shortcuts.put(comm, scanAction);
+    actionStrokes.put(comm, stroke);
+  }
+  
+  public void addShortcut(JComponent comp, String comm){
+    KeyStroke stroke;
+    Action action;
+    InputMap inputMap;
+    
+    stroke=actionStrokes.get(comm);
+    action=shortcuts.get(comm);
+    
+    inputMap = comp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    inputMap.put(stroke, comm);
+    comp.getActionMap().put(comm, action);
   }
   
   /*
