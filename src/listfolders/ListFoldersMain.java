@@ -2,11 +2,9 @@ package listfolders;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,12 +15,9 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -44,6 +39,7 @@ import javax.swing.border.EmptyBorder;
 import listfolders.includes.Database;
 import listfolders.includes.Functions;
 import listfolders.includes.ScanDirectory;
+import listfolders.includes.ScanDirectoryOld;
 import listfolders.includes.TopDashedBorder;
 import listfolders.treeviwer.TreeViewerWindow;
 
@@ -93,6 +89,7 @@ public class ListFoldersMain {
   public static Database db;
   public static Functions fun;
   public static ScanDirectory scandir;
+  public static ScanDirectoryOld scandirOld;
   
   /**
    * Launch the application.

@@ -1,12 +1,18 @@
 package listfolders.includes;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
+import java.util.regex.Matcher; 
 import java.util.regex.Pattern;
 
 import javax.swing.SwingWorker;
@@ -18,7 +24,7 @@ import listfolders.includes.tree.TreeNode;
 
 import com.google.gson.Gson;
 
-public class ScanDirectory {
+public class ScanDirectoryOld {
   public Functions fun;
   public ListFoldersMain window;
   public ScanWorker worker;
@@ -87,7 +93,7 @@ public class ScanDirectory {
       window.bScanDir.setActionCommand("stop");
       window.taOutput.setText("");
       
-      jsonArray = fullScan(new File(path), 0);
+      jsonArray = fullScan(path, 0);
       
       return null;
     }
@@ -107,6 +113,8 @@ public class ScanDirectory {
       window.progressBar.setValue(100);
       
       if(text.length()==0 && doExportText) text="No Data!";
+      
+      text="Old Output:\n\n"+text;
       window.taOutput.setText(text);
       
       if(scanCanceled){
@@ -137,29 +145,32 @@ public class ScanDirectory {
     /*
      * Recursively scans all subdirectories
      */
-    public ArrayList<TreeNode> fullScan(File dir, int level) {
+    public ArrayList<TreeNode> fullScan(String dir, int level) {
       if(scanCanceled) return null;
       
       ArrayList<TreeNode> json, res;
-      ArrayList<File> list;
-      File[] data;
+      ArrayList<String> list;
+      String[] data;
       String pad;
+      File file;
 
       json = new ArrayList<TreeNode>();                               // json is recursive tree structure needed for the jsTree plugin
 
-      data = dir.listFiles();                                             // get string list of files in the current level directory
+      file = new File(dir);
+      data = file.list();                                             // get string list of files in the current level directory
       if(level==0)
-        list = prepareInitialData(data);
+        list = getInitialData(data);
       else
         list = prepareData(data, dir);
       pad = getPadding(level);
       
-      for (File file : list) {
+      for (String value : list) {
         TreeNode node;
-        String name=file.getName();
+        String item = dir + '/' + value;
+        file = new File(item);
         
-        if (file.isDirectory()) {                       // directories
-          String currentDir = "[" + name + "]";
+        if (file.isDirectory() == true) {                       // directories
+          String currentDir = "[" + value + "]";
           
           if(level==0){
             updateStatusBar("scanning", currentDir);
@@ -170,11 +181,11 @@ public class ScanDirectory {
           if(doExportMarkup)
             markup+=pad+wrapDir(currentDir)+nl;
 
-          res = fullScan(file, level + 1);                      // recursive scan
+          res = fullScan(item, level + 1);                      // recursive scan
           if(res==null) return null;
           
           if(doExportTree){
-            node = new DirNode(name, res);
+            node = new DirNode(value, res);
             json.add(node);
           }
           
@@ -186,7 +197,7 @@ public class ScanDirectory {
             logStats(currentDir, progress);
           }
         } else {                                                // files
-          String currentFile = name;
+          String currentFile = value;
           
           if(doExportText)
             text+=pad+currentFile+nl; 
@@ -194,7 +205,7 @@ public class ScanDirectory {
             markup+=pad+wrapFile(currentFile)+nl;
           
           if(doExportTree){
-            node = new FileNode(name, getIcon(name));
+            node = new FileNode(value, getIcon(value));
             json.add(node);
           }
         }
@@ -248,7 +259,7 @@ public class ScanDirectory {
   
 // --------------------------------------------- Constructor --------------------------------------------- 
 
-  public ScanDirectory() {
+  public ScanDirectoryOld() {
     String filterExtText, excludeExtText, filterDirText;
     fun=new Functions();
     window=ListFoldersMain.window;
@@ -295,17 +306,18 @@ public class ScanDirectory {
    * Filters files and folders
    * Sorts by name and directories-first order
    */
-  private ArrayList<File> prepareData(File[] data, File dir) {
-    ArrayList<File> folders = new ArrayList<File>(), 
-    files = new ArrayList<File>(), list;
+  private ArrayList<String> prepareData(String[] data, String dir) {
+    ArrayList<String> folders = new ArrayList<String>(), 
+    files = new ArrayList<String>(), list;
 
-    for (File file : data) {
-      String name=file.getName();
-      
-      if (file.isDirectory()) {                        // add directories
-        folders.add(file);
-      } else if (filterFile(name)) {                   // filter files and add
-        files.add(file);
+    for (String value : data) {
+      String item = dir + '/' + value;
+      File f = new File(item);
+
+      if (f.isDirectory() == true) {                    // add directories
+        folders.add(value);
+      } else if (filterFile(value)) {                   // filter files and add
+        files.add(value);
       }
     }
     
@@ -313,26 +325,22 @@ public class ScanDirectory {
     return list;
   }
   
-  /*
-   * Gets files list for the root directory
-   * Filters top-level directories, 
-   * gets the top folders count and calculates the longest directory name for the thread stats
-   */
-  private ArrayList<File> prepareInitialData(File[] data) {
-    ArrayList<File> folders = new ArrayList<File>(), 
-    files = new ArrayList<File>(), list;
+  private ArrayList<String> getInitialData(String[] data) {
+    ArrayList<String> folders = new ArrayList<String>(), 
+    files = new ArrayList<String>(), list;
     int longest=0;
     
-    for (File file : data) {
-      String name=file.getName();
-      
-      if (file.isDirectory() == true) {                // add directories
-        if(filterDir.size()!=0 && !filterDirectory(name)) continue;                 // filter root directories
-        folders.add(file);
-        if(name.length()>longest)                                                   // get the longest dir name
-          longest=name.length();
-      } else if (filterFile(name)) {                   // filter files and add
-        files.add(file);
+    for (String value : data) {
+      String item = path + '/' + value;
+      File f = new File(item);
+
+      if (f.isDirectory() == true) {                    // add directories
+        if(filterDir.size()!=0 && !filterDirectory(value)) continue;
+        folders.add(value);
+        if(value.length()>longest)
+          longest=value.length();
+      } else if (filterFile(value)) {                   // filter files and add
+        files.add(value);
       }
     }
     
@@ -346,8 +354,8 @@ public class ScanDirectory {
   /*
    * Merge folders and files arrays
    */
-  private ArrayList<File> getList(ArrayList<File> folders, ArrayList<File> files) {
-    ArrayList<File> list = new ArrayList<File>();
+  private ArrayList<String> getList(ArrayList<String> folders, ArrayList<String> files) {
+    ArrayList<String> list = new ArrayList<String>();
     Collections.sort(folders);
     Collections.sort(files);
     list.addAll(folders);
