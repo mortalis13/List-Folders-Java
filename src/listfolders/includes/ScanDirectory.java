@@ -80,9 +80,13 @@ public class ScanDirectory {
     "mov", "mp4", "mpg", "mpeg", "3gp",
   };
   
+// ----------------------------------- Scan worker class ----------------------------------- 
   
   class ScanWorker extends SwingWorker<Void, Integer> implements PropertyChangeListener{
 
+    /*
+     * Runs directory processing in a background thread
+     */
     public Void doInBackground() {
       setProgress(0);
       prevTime=System.currentTimeMillis();
@@ -92,14 +96,17 @@ public class ScanDirectory {
       
       jsonArray = fullScan(path, 0);
       
+      return null;
+    }
+    
+    /*
+     * Exports and outputs results of the scanning
+     */
+    public void done(){
       if(doExportText) exportText();
       if(doExportMarkup) exportMarkup();
       if(doExportTree) exportTree();
       
-      return null;
-    }
-    
-    public void done(){
       window.bScanDir.setText("Scan Directory");
       window.bScanDir.setActionCommand("scan");
       updateStatusBar("finish", null);
@@ -114,11 +121,17 @@ public class ScanDirectory {
       }
     }
     
+    /*
+     * Processes intemediate results and send the progress value to the propertyChange() listener
+     */
     protected void process(List<Integer> list){
       int processedCount=list.get(0);
       setProgress(Math.min(processedCount, 100));
     }
     
+    /*
+     * Processes property change event and sets the progress bar value
+     */
     public void propertyChange(PropertyChangeEvent evt) {
       if ("progress" == evt.getPropertyName() && !isDone()) {
         int progress = (Integer) evt.getNewValue();
@@ -126,6 +139,11 @@ public class ScanDirectory {
       } 
     }
     
+// ----------------------------------- additional ScanWorker functions ----------------------------------- 
+    
+    /*
+     * Recursively scans all subdirectories
+     */
     public ArrayList<TreeNode> fullScan(String dir, int level) {
       if(scanCanceled) return null;
       
@@ -172,7 +190,7 @@ public class ScanDirectory {
           
           if(level==0){
             dirCount++;
-            int progress=(int) ((float) dirCount/rootDirCount*100);
+            int progress=(int) ((float) dirCount/rootDirCount*100);                // send stats (progress)
             publish(progress);
             
             logStats(currentDir, progress);
@@ -195,6 +213,9 @@ public class ScanDirectory {
       return json;
     }
     
+    /*
+     * Calculates and outputs time between folders processing
+     */
     private void logStats(String currentDir, int progress){
       long currentTime=System.currentTimeMillis();
       int time=(int) (currentTime-prevTime);
@@ -203,10 +224,10 @@ public class ScanDirectory {
       String timeString=formatTime(time, "Time: %.2f s");
       
       int len=currentDir.length();
-      int dif=longestDirName-len-2;
+      int dif=longestDirName-(len-2);
       
       String spaces="";
-      for(int i=0;i<dif;i++)
+      for(int i=0;i<dif;i++)                                          // align next text columns in the log with the longest folder name
         spaces+=" ";
       
       totalTime+=time;
@@ -215,6 +236,9 @@ public class ScanDirectory {
       System.out.println("\t Dir: "+dirCount+"/"+rootDirCount+" \t progress: "+progress+"%");
     }
     
+    /*
+     * Sets text in the window status bar
+     */
     private void updateStatusBar(String type, String currentDir){
       String text="";
       
@@ -230,6 +254,9 @@ public class ScanDirectory {
       window.lStatus.setText(text);
     }
     
+    /*
+     * Formats time value according to the format
+     */
     private String formatTime(int time, String format){
       Formatter timeFormat=new Formatter();
       timeFormat.format(format, (float) time/1000);
@@ -238,6 +265,7 @@ public class ScanDirectory {
 
   }
   
+// --------------------------------------------- Constructor --------------------------------------------- 
 
   public ScanDirectory() {
     String filterExtText, excludeExtText, filterDirText;
@@ -250,7 +278,7 @@ public class ScanDirectory {
     HashMap fields=fun.getFieldsMap();
     
     path=(String)fields.get("path");
-    path=formatPath(path);
+    path=Functions.formatPath(path);
     window.tfPath.setText(path);
     
     filterExtText=(String)fields.get("filterExt");
@@ -280,58 +308,6 @@ public class ScanDirectory {
     worker.cancel(true);
   }
   
-  /*
-   * Recursive scans all subdirectories
-   */
-  public ArrayList<TreeNode> fullScan(String dir, int level) {
-    ArrayList<TreeNode> json, res;
-    ArrayList<String> list;
-    String[] data;
-    String pad;
-    File file;
-
-    json = new ArrayList<TreeNode>();                               // json is recursive tree structure needed for the jsTree plugin
-
-    file = new File(dir);
-    data = file.list();                                             // get string list of files in the current level directory
-    list = prepareData(data, dir);                                  // clean of filtered dirs and exts, sort by name and put directories first
-    pad = getPadding(level);
-
-    for (String value : list) {
-      TreeNode node;
-      String item = dir + '/' + value;
-      file = new File(item);
-      
-      if (file.isDirectory() == true) {                       // directories
-        boolean passed=true;
-        if(filterDir.size()!=0 && level==-1){                 // filter directories
-          passed=filterDirectory(value);                 
-        }
-        if(!passed) continue;
-        
-        String currentDir = "[" + value + "]";
-
-        textArray.add(pad + currentDir);                      // add text and markup lines to arrays
-        markupArray.add(wrapDir(pad + currentDir));
-
-        res = fullScan(item, level + 1);                      // recursive scan
-        
-        node = new DirNode(value, res);
-        json.add(node);
-      } else {                                                // files
-        String currentFile = value;
-
-        textArray.add(pad + currentFile);
-        markupArray.add(wrapFile(pad + currentFile));
-
-        node = new FileNode(value, getIcon(value));
-        json.add(node);
-      }
-    }
-
-    return json;
-  }
-
   // --------------------------------------------------- helpers ---------------------------------------------------
   
   /*
@@ -393,20 +369,6 @@ public class ScanDirectory {
     list.addAll(folders);
     list.addAll(files);
     return list;
-  }
-  
-  /*
-   * Formats path, fixes backslashes, trims and removes last slash
-   */
-  public String formatPath(String path) {
-    path=path.replace('\\', '/');
-    path=path.trim();
-    
-    int last=path.length()-1;
-    if(path.substring(last).equals("/"))
-      path=path.substring(0,last);
-    
-    return path;
   }
   
   /*
@@ -568,7 +530,7 @@ public class ScanDirectory {
   /*
    * Checks if text matches partially to regex
    */
-  public boolean match(String regex, String text) {
+  public boolean matches(String regex, String text) {
     Pattern pat=Pattern.compile(regex);
     return pat.matcher(text).find();
   }
@@ -603,7 +565,7 @@ public class ScanDirectory {
   public boolean filterFile(String file) {
     if(excludeExt.size()!=0){
       for(String ext:excludeExt){
-        if(match("\\."+ext+"$",file))
+        if(matches("\\."+ext+"$",file))
           return false;
       }
       return true;
@@ -611,7 +573,7 @@ public class ScanDirectory {
     
     if(filterExt.size()==0) return true;
     for(String ext:filterExt){
-      if(match("\\."+ext+"$",file))
+      if(matches("\\."+ext+"$",file))
         return true;
     }
     return false;

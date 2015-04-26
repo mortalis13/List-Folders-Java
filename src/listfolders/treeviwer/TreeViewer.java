@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.SwingWorker;
 
+import listfolders.includes.Functions;
 import listfolders.includes.tree.DirNode;
 import listfolders.includes.tree.FileNode;
 import listfolders.includes.tree.TreeNode;
@@ -37,7 +38,11 @@ public class TreeViewer{
   
   public ArrayList<String> iconNames;
   
+// ------------------------------------------- Tree worker class -------------------------------------------
+  
   class TreeWorker extends SwingWorker<Void, Integer> implements PropertyChangeListener{
+
+  // ========== main functions ==========
 
     public Void doInBackground() {
       treeData=getTree();
@@ -48,27 +53,24 @@ public class TreeViewer{
       loadTreeIntoWindow();
     }
     
+  // ========== additional functions ==========
+    
+    /*
+     * Gets JSON string from file and then recursive tree structure from this string
+     */
     public ArrayList<TreeNode> getTree(){
       ArrayList<TreeNode> tree;
-      String json,file;
+      String json;
       
-      long time1,time2;
-      time1=System.currentTimeMillis();
       json=readJSON();
-      time2=System.currentTimeMillis();
-      System.out.println("Read time: "+formatTime((int) (time2-time1), "%.2f s") );
-      
-      time1=System.currentTimeMillis();
       tree=decodeJSON(json);
-      time2=System.currentTimeMillis();
-      System.out.println("Decode time: "+formatTime((int) (time2-time1), "%.2f s") );
-      
-//      json=readJSON(file);
-//      tree=decodeJSON(json);
       
       return tree;
     }
     
+    /*
+     * Reads JSON file and returns the string
+     */
     public String readJSON(){
       String doc = "";
       
@@ -85,6 +87,9 @@ public class TreeViewer{
       return doc;
     }
     
+    /*
+     * Parses JSON string and returns tree structure
+     */
     public ArrayList<TreeNode> decodeJSON(String json){
       ArrayList<TreeNode> tree;
       JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
@@ -92,6 +97,10 @@ public class TreeViewer{
       return tree;
     }
     
+    /*
+     * Recursively walks the JSON array obtained from the JSON string
+     * and converts its nodes to correct DirNode and FileNode objects
+     */
     public ArrayList<TreeNode> convertJsonToTree(JsonArray jsonArray){
       ArrayList<TreeNode> tree=new ArrayList<TreeNode>();
       Gson gson=new Gson();
@@ -117,6 +126,7 @@ public class TreeViewer{
       return tree;
     }
     
+  // ========== not-used stats functions ==========
     
     protected void process(List<Integer> list){
     }
@@ -158,7 +168,11 @@ public class TreeViewer{
     window=TreeViewerWindow.window;
     iconNames=new ArrayList<String>();
   }
-    
+  
+  /*
+   * Runs the background thread to load the tree data 
+   * which then passes the control to the loadTreeIntoWindow() function to show the tree
+   */
   public void showTree(){
     path=window.tfPath.getText();
     TreeWorker worker=new TreeWorker();
@@ -166,11 +180,14 @@ public class TreeViewer{
     worker.execute();
   }
   
+  /*
+   * Creates the root node, creates new tree and includes it into the scroll pane
+   */
   public void loadTreeIntoWindow(){
     if(treeData!=null){
       DirectoryTree tree=window.tree;
       
-      rootName=getNameFromPath();
+      rootName=Functions.getNameFromPath(path);
       DirNode root=new DirNode(rootName, treeData);
       
       tree=new DirectoryTree(iconNames);
@@ -181,6 +198,9 @@ public class TreeViewer{
     }
   }
   
+  /*
+   * Gets icon name and extension from the full icon path
+   */
   public static String getIconFromNode(String iconPath){
     String icon=null;
     
@@ -195,48 +215,6 @@ public class TreeViewer{
     }
     
     return icon;
-  }
-  
-  public static String formatPath(String path) {
-    path=path.replace('\\', '/');
-    path=path.trim();
-    
-    int last=path.length()-1;
-    if(path.substring(last).equals("/"))
-      path=path.substring(0,last);
-    
-    return path;
-  }
-  
-  public String getNameFromPath(){
-    String name="";
-    
-    Pattern pat=Pattern.compile("/([^/]+)\\.[^/.]+$");
-    Matcher mat=pat.matcher(path);
-    
-    if(mat.find())
-      name=mat.group(1);
-    
-    return name;
-  }
-  
-  public static String getExt(String file){
-    String ext;
-    ext=regexFind("\\.([^.]+)$", file, 1);
-    ext=ext.toLowerCase();
-    return ext;
-  }
-  
-  public static String regexFind(String pattern, String text, int group){
-    String result="";
-    
-    Pattern pat=Pattern.compile(pattern);
-    Matcher mat=pat.matcher(text);
-    
-    if(mat.find())
-      result=mat.group(group);
-    
-    return result;
   }
   
 }

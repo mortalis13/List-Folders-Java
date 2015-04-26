@@ -29,8 +29,8 @@ public class DirectoryTree extends JTree implements TreeWillExpandListener{
     
     getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     setToggleClickCount(1);
-    addTreeWillExpandListener(this);
     setShowsRootHandles(true);
+    addTreeWillExpandListener(this);
     
     renderer=new DirectoryRenderer(iconNames);
     setCellRenderer(renderer);

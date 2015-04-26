@@ -8,30 +8,24 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
-import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,10 +34,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -65,6 +57,7 @@ public class ListFoldersMain {
   public JTextArea taFilterDir;
   public JTextArea taOutput;
   
+  public JLabel lPath;
   public JTextField tfPath;
   public JTextField tfExportName;
   
@@ -83,6 +76,7 @@ public class ListFoldersMain {
   public JToggleButton bManageOptions;
   public JButton bScanDir;
   public JButton bTreeViewer;
+  public JButton bBrowse;
   
   public JButton bClearFilterExt;
   public JButton bClearExcludeExt;
@@ -90,6 +84,8 @@ public class ListFoldersMain {
   public JButton bToggleExports;
   
   public JProgressBar progressBar;
+  public JFileChooser fc;
+  
   public Dialog dialog;
   public TreeViewerWindow treeViewerWindow;
   public ManageOptionsDialog manOptDialog;
@@ -116,35 +112,6 @@ public class ListFoldersMain {
     });
   }
   
-  /*
-   * Adds global keyboard shortcuts
-   */
-  private void addKeyboardManager(){
-    KeyboardFocusManager keyManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-    keyManager.addKeyEventDispatcher( new KeyEventDispatcher() {
-      
-      @Override
-      public boolean dispatchKeyEvent(KeyEvent e) {
-       // KeyStroke key1 = KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.ALT_DOWN_MASK);
-       // KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
-        
-        if(e.getID()==KeyEvent.KEY_PRESSED && e.getKeyCode()==27){                              // ESC
-          SwingUtilities.invokeLater( new Runnable() {
-            @Override
-            public void run() {
-              // frame.dispose();
-             // System.exit(0);
-            }
-          } );
-           
-          return true;
-        }
-        return false;
-      }
-      
-    });
-  }
-
   /**
    * Create the application.
    */
@@ -157,12 +124,7 @@ public class ListFoldersMain {
    */
   private void initialize() {
     frame = new JFrame("List Folders");
-//    addKeyboardManager();                                                     // global keyboard shortcuts
-    
-    List<Image> icons = new ArrayList<Image>();
-    icons.add(new ImageIcon("icons/icon16.png").getImage());
-    icons.add(new ImageIcon("icons/icon32.png").getImage());
-    frame.setIconImages(icons);
+    Functions.setWindowIcon(frame);
     
     frame.addComponentListener(new ComponentAdapter() {
       @Override
@@ -179,7 +141,7 @@ public class ListFoldersMain {
         if(manOptDialog!=null)
           manOptDialog.dispose();
         if(treeViewerWindow!=null)
-          treeViewerWindow.frame.dispose();
+          treeViewerWindow.frame.dispose(); 
       }
       @Override
       public void windowOpened(WindowEvent e) {                             // assign static objects for use in other classes
@@ -189,10 +151,13 @@ public class ListFoldersMain {
         
         fun.addShortcut(frame.getRootPane(), "exit");
         fun.addShortcut(bScanDir, "scan");
+        fun.addShortcut(bBrowse, "browseDir");
       }
     });
     frame.setBounds(0, 0, 516, 707);
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    
+// ----------------------------------------------------- Buttons -----------------------------------------------------
 
     bClearFilterExt = new JButton("Clear");
     bClearExcludeExt = new JButton("Clear");
@@ -263,7 +228,6 @@ public class ListFoldersMain {
       }
     });
     
-    
     bManageOptions = new JToggleButton("Manage Options");
     bManageOptions.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -277,7 +241,7 @@ public class ListFoldersMain {
         }else{
           manOptDialog.setVisible(false);
         }
-      }
+      } 
     });
     
     JButton bClearOutput=new JButton("Clear");
@@ -287,32 +251,66 @@ public class ListFoldersMain {
       }
     });
     
-// ----------------------------------------------------- Main window layout -----------------------------------------------------
+    bBrowse=new JButton("Browse...");
+    bBrowse.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        String path;
+        fc = new JFileChooser();
+        
+        path=tfPath.getText();
+        if(path.length()!=0)
+          fc.setCurrentDirectory(new File(path));
+        
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnVal = fc.showOpenDialog(frame);
+        
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+          File file = fc.getSelectedFile();
+          path=file.getPath();
+          path=fun.formatPath(path);
+          tfPath.setText(path);
+        } 
+      }
+    });
     
-    JPanel pWrapper = new JPanel();
-    GroupLayout gl = new GroupLayout(frame.getContentPane());
-    gl.setHorizontalGroup(
-      gl.createParallelGroup(Alignment.LEADING)
-        .addComponent(pWrapper, GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
-    );
-    gl.setVerticalGroup(
-      gl.createParallelGroup(Alignment.LEADING)
-        .addComponent(pWrapper, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-    );
-    
-    tfPath = new JTextField();
-    tfPath.setMargin(new Insets(2, 5, 2, 2));
-    
-    tfExportName = new JTextField();
-    tfExportName.setMargin(new Insets(2, 5, 2, 2));
-    tfExportName.setPreferredSize(new Dimension(150, 20));
+// ----------------------------------------------------- Components -----------------------------------------------------
     
     JPanel pOptions = new JPanel();
     JPanel pExports = new JPanel();
+    JPanel pWrapper = new JPanel();
     
-    JLabel lExportName = new JLabel("Export Name");
+    pFilterExtScroll = new JScrollPane();
+    pExcludeExtScroll = new JScrollPane();
+    pFilterDirScroll = new JScrollPane();
+    pOutputScroll = new JScrollPane();
+    
+    lPath = new JLabel("Path");
+    tfPath = new JTextField();
+    tfPath.setMargin(new Insets(2, 5, 2, 2));
+    
+  // ===================== Filter Textareas =====================
+    
+    JLabel lFilterExt = new JLabel("Filter Extensions");
+    taFilterExt = new JTextArea();
+    taFilterExt.setMargin(new Insets(5, 5, 5, 5));
+    taFilterExt.setLineWrap(true);
+    taFilterExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    
+    JLabel lExcludeExt = new JLabel("Exclude Extensions");
+    taExcludeExt = new JTextArea();
+    taExcludeExt.setLineWrap(true);
+    taExcludeExt.setMargin(new Insets(5, 5, 5, 5));
+    taExcludeExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    
+    JLabel lFilterDir = new JLabel("Filter Directories");
+    taFilterDir = new JTextArea();
+    taFilterDir.setLineWrap(true);
+    taFilterDir.setMargin(new Insets(5, 5, 5, 5));
+    taFilterDir.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    
+  // ===================== Export Options =====================
+    
     JLabel lExportOptions = new JLabel("Export Options");
-    
     chExportText = new JCheckBox("Export Text");
     chExportText.setMargin(new Insets(0, 0, 10, 0));
     chExportText.setIconTextGap(5);
@@ -327,8 +325,50 @@ public class ListFoldersMain {
     chExportTree.setMargin(new Insets(0, 0, 10, 0));
     chExportTree.setIconTextGap(5);
     chExportTree.setHorizontalAlignment(SwingConstants.LEFT);
-
-// ----------------------------------------------------- Export options panel layout -----------------------------------------------------
+    
+    JLabel lExportName = new JLabel("Export Name");
+    tfExportName = new JTextField();
+    tfExportName.setMargin(new Insets(2, 5, 2, 2));
+    tfExportName.setPreferredSize(new Dimension(150, 20));
+    
+  // ===================== Output Textarea and Status bar =====================
+    
+    taOutput = new JTextArea();
+    taOutput.setLineWrap(true);
+    taOutput.setMargin(new Insets(5, 5, 5, 5));
+    taOutput.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    
+    progressBar = new JProgressBar();
+    
+    lStatus = new JLabel(" ");
+    lStatus.setOpaque(true);
+    
+    Border statusBorder=new CompoundBorder(new TopDashedBorder(), new EmptyBorder(5, 5, 5, 5));
+    pStatusBar = new JPanel();
+    pStatusBar.setBorder(statusBorder);
+    
+    pStatusBar.setLayout(new BorderLayout());
+    pStatusBar.add(lStatus);
+    
+    
+// =======================================================================================================================
+// ===================================================== Layouts =========================================================
+// =======================================================================================================================
+    
+    
+// -------------------------------------------------- Main layout --------------------------------------------------
+    
+    GroupLayout gl = new GroupLayout(frame.getContentPane());
+    gl.setHorizontalGroup(
+      gl.createParallelGroup(Alignment.LEADING)
+        .addComponent(pWrapper, GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+    );
+    gl.setVerticalGroup(
+      gl.createParallelGroup(Alignment.LEADING)
+        .addComponent(pWrapper, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+    );
+    
+// -------------------------------------------------- Export options panel layout --------------------------------------------------
     
     GroupLayout gl_pExports = new GroupLayout(pExports);
     gl_pExports.setHorizontalGroup(
@@ -349,29 +389,6 @@ public class ListFoldersMain {
     
     gl_pExports.linkSize(SwingConstants.HORIZONTAL, new Component[] {chExportText, chExportMarkup, chExportTree});
     pExports.setLayout(gl_pExports);
-    
-    JLabel lFilterExt = new JLabel("Filter Extensions");
-    taFilterExt = new JTextArea();
-    taFilterExt.setMargin(new Insets(5, 5, 5, 5));
-    taFilterExt.setLineWrap(true);
-    taFilterExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
-    
-    JLabel lExcludeExt = new JLabel("Exclude Extensions");
-    taExcludeExt = new JTextArea();
-    taExcludeExt.setLineWrap(true);
-    taExcludeExt.setMargin(new Insets(5, 5, 5, 5));
-    taExcludeExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
-    
-    JLabel lFilterDir = new JLabel("Filter Directories");
-    taFilterDir = new JTextArea();
-    taFilterDir.setLineWrap(true);
-    taFilterDir.setMargin(new Insets(5, 5, 5, 5));
-    taFilterDir.setFont(new Font("Monospaced", Font.PLAIN, 12));
-    
-    pFilterExtScroll = new JScrollPane();
-    pExcludeExtScroll = new JScrollPane();
-    pFilterDirScroll = new JScrollPane();
-    pOutputScroll = new JScrollPane();
     
 // ----------------------------------------------------- Options panel layout -----------------------------------------------------
     
@@ -428,29 +445,15 @@ public class ListFoldersMain {
     );
     pOptions.setLayout(gl_pOptions);
     
-    taOutput = new JTextArea();
-    taOutput.setLineWrap(true);
-    taOutput.setMargin(new Insets(5, 5, 5, 5));
-    taOutput.setFont(new Font("Monospaced", Font.PLAIN, 12));
-    
-    progressBar = new JProgressBar();
-    
-    lStatus = new JLabel(" ");
-    lStatus.setOpaque(true);
-    
-    Border statusBorder=new CompoundBorder(new TopDashedBorder(), new EmptyBorder(5, 5, 5, 5));
-    pStatusBar = new JPanel();
-    pStatusBar.setBorder(statusBorder);
-    
-    pStatusBar.setLayout(new BorderLayout());
-    pStatusBar.add(lStatus);
-    
 // ----------------------------------------------------- External wrapper layout -----------------------------------------------------
     
     GroupLayout gl_pWrapper = new GroupLayout(pWrapper);
     gl_pWrapper.setHorizontalGroup(
       gl_pWrapper.createParallelGroup(Alignment.LEADING)
-        .addComponent(tfPath, 0, 480, Short.MAX_VALUE)
+        .addComponent(lPath, 0, 480, Short.MAX_VALUE)
+        .addGroup(gl_pWrapper.createSequentialGroup()
+          .addComponent(tfPath, 0, 480, Short.MAX_VALUE)
+          .addComponent(bBrowse))
         .addComponent(pOptions, 0, 480, Short.MAX_VALUE)
         .addComponent(lExportName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
         .addGroup(gl_pWrapper.createSequentialGroup()
@@ -470,17 +473,18 @@ public class ListFoldersMain {
     gl_pWrapper.setVerticalGroup(
       gl_pWrapper.createParallelGroup(Alignment.LEADING)
         .addGroup(gl_pWrapper.createSequentialGroup()
-          .addComponent(tfPath, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+          .addComponent(lPath)
+          .addGroup(gl_pWrapper.createParallelGroup(Alignment.LEADING)
+            .addComponent(tfPath, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+            .addComponent(bBrowse, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
           .addGap(18)
           .addComponent(pOptions, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
           .addGap(18)
           .addComponent(lExportName)
           .addPreferredGap(ComponentPlacement.RELATED)
-          
           .addGroup(gl_pWrapper.createParallelGroup(Alignment.LEADING)
             .addComponent(tfExportName, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
             .addComponent(bTreeViewer, Alignment.TRAILING))
-          
           .addGap(18)
           .addGroup(gl_pWrapper.createParallelGroup(Alignment.LEADING)
             .addComponent(bScanDir, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
@@ -492,9 +496,7 @@ public class ListFoldersMain {
           .addComponent(progressBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
           .addGap(10)
           .addComponent(pStatusBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-          .addGap(0)
-          // .addContainerGap()
-          )
+          .addGap(0))
     );
     gl_pWrapper.linkSize(SwingConstants.VERTICAL, new Component[] {bScanDir, bManageOptions, bTreeViewer});
     gl_pWrapper.linkSize(SwingConstants.HORIZONTAL, new Component[] {bScanDir, bManageOptions, bTreeViewer});
@@ -508,7 +510,6 @@ public class ListFoldersMain {
     
     pWrapper.setLayout(gl_pWrapper);
     frame.getContentPane().setLayout(gl);
-    
   }
   
 }

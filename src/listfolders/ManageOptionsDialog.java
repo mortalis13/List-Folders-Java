@@ -80,6 +80,7 @@ public class ManageOptionsDialog extends JDialog {
         manOpt=new ManageOptions();
         manOpt.listOptions();
         fun.addShortcut(getRootPane(), "closeManOpt");
+        fun.addShortcut(tfName, "addOption");
       }
       
       @Override
@@ -125,6 +126,10 @@ public class ManageOptionsDialog extends JDialog {
     pStatusBar = new JPanel();
     pStatusBar.setBorder(statusBorder);
     
+    lStatus = new JLabel("");
+    lStatus.setOpaque(true);
+    pStatusBar.add(lStatus);
+    
     GroupLayout gl_panel = new GroupLayout(panel);
     gl_panel.setHorizontalGroup(
       gl_panel.createParallelGroup(Alignment.LEADING)
@@ -163,9 +168,6 @@ public class ManageOptionsDialog extends JDialog {
     gl_panel.linkSize(SwingConstants.HORIZONTAL, new Component[] {bAdd, bRemove});
     pStatusBar.setLayout(new BorderLayout(5, 0));
     
-    lStatus = new JLabel("");
-    lStatus.setOpaque(true);
-    pStatusBar.add(lStatus);
     panel.setLayout(gl_panel);
   }
 }

@@ -1,13 +1,18 @@
 package listfolders.treeviwer;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -35,6 +40,8 @@ public class TreeViewerWindow {
   public JButton bBrowse;
   public JFileChooser fc;
   
+  String filterStartDir="export/tree/json";
+  
   Functions fun;
   
   /**
@@ -49,14 +56,16 @@ public class TreeViewerWindow {
    * Initialize the contents of the frame.
    */
   private void initialize() {
-    frame = new JFrame();
+    frame = new JFrame("Tree Viewer");
+    Functions.setWindowIcon(frame);
 
     frame.addWindowListener(new WindowAdapter() {
       @Override
       public void windowOpened(WindowEvent e) {
+        treeViewer=new TreeViewer();
         fun=new Functions();
         fun.addShortcut(frame.getRootPane(), "exitTreeViewer");
-        treeViewer=new TreeViewer();
+        fun.addShortcut(bBrowse, "browseTreeFile");
       }
     });
     frame.setBounds(100, 100, 577, 535);
@@ -90,14 +99,15 @@ public class TreeViewerWindow {
     bBrowse = new JButton();
     bBrowse.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        fc = new JFileChooser(".");
+        fc = new JFileChooser();
+        fc.setCurrentDirectory(new File(filterStartDir));
         fc.setFileFilter(new CustomFilter());
         int returnVal = fc.showOpenDialog(frame);
         
         if (returnVal == JFileChooser.APPROVE_OPTION) {
           File file = fc.getSelectedFile();
           String path=file.getPath();
-          path=TreeViewer.formatPath(path);
+          path=Functions.formatPath(path);
           tfPath.setText(path);
         } 
       }

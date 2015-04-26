@@ -16,6 +16,9 @@ public class DirectoryRenderer extends DefaultTreeCellRenderer {
   HashMap<String, Icon> icons;
   ArrayList<String> iconNames;
 
+  /*
+   * Gets all icons and loads them before they appear in the tree
+   */
   public DirectoryRenderer(ArrayList<String> iconNames) {
     this.iconNames=iconNames;
     icons=new HashMap<String, Icon>();
@@ -28,6 +31,9 @@ public class DirectoryRenderer extends DefaultTreeCellRenderer {
     }
   }
 
+  /*
+   * Gets icon path from the source FileNode object
+   */
   @Override
   public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
     super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
