@@ -58,39 +58,20 @@ public class TreeViewer{
     /*
      * Gets JSON string from file and then recursive tree structure from this string
      */
-    public ArrayList<TreeNode> getTree(){
+    private ArrayList<TreeNode> getTree(){
       ArrayList<TreeNode> tree;
       String json;
       
-      json=readJSON();
-      tree=decodeJSON(json);
+      json=Functions.readWholeFile(path);
+      tree=decodeJSONTree(json);
       
       return tree;
     }
     
     /*
-     * Reads JSON file and returns the string
-     */
-    public String readJSON(){
-      String doc = "";
-      
-      try {
-        Path filePath = Paths.get(path);
-        Charset charset = Charset.forName("UTF-8");
-        
-        byte[] data = Files.readAllBytes(filePath);
-        doc=new String(data, charset);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      
-      return doc;
-    }
-    
-    /*
      * Parses JSON string and returns tree structure
      */
-    public ArrayList<TreeNode> decodeJSON(String json){
+    private ArrayList<TreeNode> decodeJSONTree(String json){
       ArrayList<TreeNode> tree;
       JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
       tree=convertJsonToTree(jsonArray);
@@ -101,7 +82,7 @@ public class TreeViewer{
      * Recursively walks the JSON array obtained from the JSON string
      * and converts its nodes to correct DirNode and FileNode objects
      */
-    public ArrayList<TreeNode> convertJsonToTree(JsonArray jsonArray){
+    private ArrayList<TreeNode> convertJsonToTree(JsonArray jsonArray){
       ArrayList<TreeNode> tree=new ArrayList<TreeNode>();
       Gson gson=new Gson();
       
@@ -183,7 +164,7 @@ public class TreeViewer{
   /*
    * Creates the root node, creates new tree and includes it into the scroll pane
    */
-  public void loadTreeIntoWindow(){
+  private void loadTreeIntoWindow(){
     if(treeData!=null){
       DirectoryTree tree=window.tree;
       

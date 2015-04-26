@@ -27,6 +27,7 @@ import listfolders.includes.Functions;
 public class TreeViewerWindow {
   
   public static TreeViewerWindow window;
+  Functions fun;
   
   public JFrame frame;
   public JButton bLoadTree;
@@ -41,8 +42,6 @@ public class TreeViewerWindow {
   public JFileChooser fc;
   
   String filterStartDir="export/tree/json";
-  
-  Functions fun;
   
   /**
    * Create the application.

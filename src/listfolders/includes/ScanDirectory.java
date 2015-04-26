@@ -25,23 +25,22 @@ import listfolders.includes.tree.TreeNode;
 import com.google.gson.Gson;
 
 public class ScanDirectory {
-  Functions fun;
-  ListFoldersMain window;
-  ScanWorker worker;
+  public Functions fun;
+  public ListFoldersMain window;
+  public ScanWorker worker;
   
   public String path;
 
   public String text="";
-  String markup="";
-  String json;
+  public String markup="";
 
-  ArrayList<String> textArray;
-  ArrayList<String> markupArray;
-  ArrayList<TreeNode> jsonArray;
+  public ArrayList<String> textArray;
+  public ArrayList<String> markupArray;
+  public ArrayList<TreeNode> jsonArray;
   
-  ArrayList<String> filterExt;
-  ArrayList<String> excludeExt;
-  ArrayList<String> filterDir;
+  public ArrayList<String> filterExt;
+  public ArrayList<String> excludeExt;
+  public ArrayList<String> filterDir;
   
   boolean doExportText;
   boolean doExportMarkup;
@@ -221,7 +220,7 @@ public class ScanDirectory {
       int time=(int) (currentTime-prevTime);
       prevTime=currentTime;
       
-      String timeString=formatTime(time, "Time: %.2f s");
+      String timeString=Functions.formatTime(time, "Time: %.2f s");
       
       int len=currentDir.length();
       int dif=longestDirName-(len-2);
@@ -247,22 +246,13 @@ public class ScanDirectory {
           text="Scanning: "+currentDir;
           break;
         case "finish":
-          String time=formatTime(totalTime, "(time: %.2f s)");
+          String time=Functions.formatTime(totalTime, "(time: %.2f s)");
           text="Scanning finished "+time;
           break;
       }
       window.lStatus.setText(text);
     }
     
-    /*
-     * Formats time value according to the format
-     */
-    private String formatTime(int time, String format){
-      Formatter timeFormat=new Formatter();
-      timeFormat.format(format, (float) time/1000);
-      return timeFormat.toString();
-    }
-
   }
   
 // --------------------------------------------- Constructor --------------------------------------------- 
@@ -314,7 +304,7 @@ public class ScanDirectory {
    * Filters files and folders
    * Sorts by name and directories-first order
    */
-  public ArrayList<String> prepareData(String[] data, String dir) {
+  private ArrayList<String> prepareData(String[] data, String dir) {
     ArrayList<String> folders = new ArrayList<String>(), 
     files = new ArrayList<String>(), list;
 
@@ -333,7 +323,7 @@ public class ScanDirectory {
     return list;
   }
   
-  public ArrayList<String> getInitialData(String[] data) {
+  private ArrayList<String> getInitialData(String[] data) {
     ArrayList<String> folders = new ArrayList<String>(), 
     files = new ArrayList<String>(), list;
     int longest=0;
@@ -362,7 +352,7 @@ public class ScanDirectory {
   /*
    * Merge folders and files arrays
    */
-  public ArrayList<String> getList(ArrayList<String> folders, ArrayList<String> files) {
+  private ArrayList<String> getList(ArrayList<String> folders, ArrayList<String> files) {
     ArrayList<String> list = new ArrayList<String>();
     Collections.sort(folders);
     Collections.sort(files);
@@ -372,20 +362,6 @@ public class ScanDirectory {
   }
   
   /*
-   * Converts string to UTF-8 encoding
-   */
-  public String fixEncoding(String value){
-    String fix=value;
-    try {
-//       fix = new String(value.getBytes(), "UTF-8");
-      fix = new String(value.getBytes("UTF-8"));
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    }
-    return fix;
-  }
-
-  /*
    * Replaces strings from the tree template (strings format: '_string_') with the 'replacement' text
    */
   private String replaceTemplate(String tmpl, String replacement, String text){
@@ -394,55 +370,9 @@ public class ScanDirectory {
   }
   
   /*
-   * Gets the template for the tree view (jsTree plugin)
-   */
-  private String readTemplate(String tmpl) {
-    String doc = "", line = null;
-    BufferedReader br = null;
-
-    try {
-      br = new BufferedReader(new FileReader(tmpl));               // read by lines
-      while ((line = br.readLine()) != null) {
-        doc += line+nl;
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      try {
-        if (br != null)
-          br.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-
-    return doc;
-  }
-
-  /*
-   * Writes the text to the file
-   * filename contains extension
-   */
-  private void writeFile(String filename, String text) {
-    File file;
-    PrintWriter writer;
-    
-    try {
-      file = new File(filename);
-      file.createNewFile();
-
-      writer = new PrintWriter(filename);
-      writer.print(text);
-      writer.close();
-    } catch (Exception e) {
-      System.out.println("error-writing-file: " + e.getMessage());
-    }
-  }
-  
-  /*
    * Outputs padding spaces for text output depending on nesting level
    */
-  public String getPadding(int level) {
+  private String getPadding(int level) {
     String resPad = "";
     for (int i = 0; i < level; i++) {
       resPad += pad;
@@ -512,35 +442,12 @@ public class ScanDirectory {
     return icon;
   }
   
-  /*
-   * Joins array items into a string with separators
-   */
-  public String join(ArrayList<String> array, String separator) {
-    String res = "";
-    int size=array.size();
-    
-    for(int i=0;i<size;i++){
-      if(i==size-1)
-        separator="";
-      res += array.get(i) + separator;
-    }
-    return res;
-  }
-  
-  /*
-   * Checks if text matches partially to regex
-   */
-  public boolean matches(String regex, String text) {
-    Pattern pat=Pattern.compile(regex);
-    return pat.matcher(text).find();
-  }
-  
 // --------------------------------------------------- filters ---------------------------------------------------
   
   /*
    * Cleans, trims and checks filters for emptiness
    */
-  public ArrayList<String> getFilters(String filter) {
+  private ArrayList<String> getFilters(String filter) {
     ArrayList<String> list=new ArrayList<String>();
     String[] elements;
     filter=filter.trim();
@@ -562,10 +469,10 @@ public class ScanDirectory {
    * Filters file extensions and returns true if the file will be included in the output
    * If exclude filter is not empty ignores the include filter
    */
-  public boolean filterFile(String file) {
+  private boolean filterFile(String file) {
     if(excludeExt.size()!=0){
       for(String ext:excludeExt){
-        if(matches("\\."+ext+"$",file))
+        if(Functions.matches("\\."+ext+"$",file))
           return false;
       }
       return true;
@@ -573,7 +480,7 @@ public class ScanDirectory {
     
     if(filterExt.size()==0) return true;
     for(String ext:filterExt){
-      if(matches("\\."+ext+"$",file))
+      if(Functions.matches("\\."+ext+"$",file))
         return true;
     }
     return false;
@@ -582,7 +489,7 @@ public class ScanDirectory {
   /*
    * Uses form filter to filter directories from the first scanning level
    */
-  public boolean filterDirectory(String dir) {
+  private boolean filterDirectory(String dir) {
     for(String filter:filterDir){
       if(filter.equals(dir))
         return true;
@@ -593,17 +500,17 @@ public class ScanDirectory {
   /*
    * Gets text for the tree template
    */
-  public String getFiltersText() {
+  private String getFiltersText() {
     String filterExtText="", excludeExtText="", filterDirText="", filters="";
     
     if(filterExt.size()!=0){
-      filterExtText=join(filterExt, ",");
+      filterExtText=Functions.join(filterExt, ",");
     }
     if(excludeExt.size()!=0){
-      excludeExtText=join(excludeExt, ",");
+      excludeExtText=Functions.join(excludeExt, ",");
     }
     if(filterDir.size()!=0){
-      filterDirText=join(filterDir, ",");
+      filterDirText=Functions.join(filterDir, ",");
     }
     
     filters="Files include ["+filterExtText+"]";
@@ -615,25 +522,25 @@ public class ScanDirectory {
   
 // --------------------------------------------------- wrappers ---------------------------------------------------
 
-  public String wrapDir(String dir) {
+  private String wrapDir(String dir) {
     return "<span class=\"directory\">" + dir + "</span>";
   }
 
-  public String wrapFile(String file) {
+  private String wrapFile(String file) {
     return "<span class=\"file\">" + file + "</span>";
   }
 
-  public String wrapMarkup(String markup) {
+  private String wrapMarkup(String markup) {
     String res = "<pre>" + nl + markup + "</pre>";
     res = wrapDocument(res);
     return res;
   }
 
-  public String wrapDocument(String markup) {
+  private String wrapDocument(String markup) {
     return "<meta charset=\"utf-8\">" + nl + markup;
   }
 
-  // --------------------------------------------------- exports ---------------------------------------------------
+// --------------------------------------------------- exports ---------------------------------------------------
 
   /*
    * Exports text to a .txt file in 'export/text'
@@ -648,9 +555,9 @@ public class ScanDirectory {
     fileName = exportPath + fileName;
     
     text=this.text;
-    text=fixEncoding(text);
+    text=Functions.fixEncoding(text);
     
-    writeFile(fileName,text);
+    Functions.writeFile(fileName,text);
   }
   
   /*
@@ -665,9 +572,9 @@ public class ScanDirectory {
     fileName = getExportName(ext);
     fileName = exportPath + fileName;
     markup = wrapMarkup(this.markup);
-    markup=fixEncoding(markup);
+    markup=Functions.fixEncoding(markup);
 
-    writeFile(fileName, markup);
+    Functions.writeFile(fileName, markup);
   }
   
   /*
@@ -687,7 +594,7 @@ public class ScanDirectory {
     
     Gson gson = new Gson();
     String json = gson.toJson(jsonArray);
-    json=fixEncoding(json);
+    json=Functions.fixEncoding(json);
 
     treeName=getExportName(null);                                         // get name
     
@@ -699,7 +606,7 @@ public class ScanDirectory {
     exportDoc=treeName+".html";
     exportJSON=treeName+".json";
     
-    doc=readTemplate(tmpl);                                               // process template
+    doc=Functions.readWholeFile(tmpl);                                               // process template
     doc=replaceTemplate("_jsonPath_", jsonFolder+exportJSON, doc);
     doc=replaceTemplate("_Title_", "Directory: "+treeName, doc);
     doc=replaceTemplate("_FolderPath_", "Directory: "+path, doc);
@@ -710,8 +617,8 @@ public class ScanDirectory {
     htmlFile=exportPath+exportDoc;                                        // get paths
     jsonFile=jsonPath+exportJSON;
       
-    writeFile(htmlFile, doc);                                             // write results
-    writeFile(jsonFile, json);
+    Functions.writeFile(htmlFile, doc);                                             // write results
+    Functions.writeFile(jsonFile, json);
   }
   
   /*

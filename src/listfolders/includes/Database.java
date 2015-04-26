@@ -167,7 +167,7 @@ public class Database {
    * Insert option into the database
    * helper funtion for updateOption()
    */
-  public void addOption(String name, String value, String table) throws SQLException{
+  private void addOption(String name, String value, String table) throws SQLException{
     sql="insert into "+table+" (name,value) values(?,?)";
     prep = conn.prepareStatement(sql);
     prep.setString(1, name);

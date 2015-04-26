@@ -86,7 +86,6 @@ public class ListFoldersMain {
   public JProgressBar progressBar;
   public JFileChooser fc;
   
-  public Dialog dialog;
   public TreeViewerWindow treeViewerWindow;
   public ManageOptionsDialog manOptDialog;
   

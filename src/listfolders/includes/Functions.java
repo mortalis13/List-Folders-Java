@@ -4,7 +4,18 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,13 +33,14 @@ import listfolders.ListFoldersMain;
 
 import com.google.gson.Gson;
 
-
 public class Functions {
   
-  ListFoldersMain window;
-  Database db;
+  public ListFoldersMain window;
+  public Database db;
   
-  public HashMap<String, Shortcut> shortcuts;
+  static final String nl="\n";
+  
+  private HashMap<String, Shortcut> shortcuts;
   
 // ----------------------------------------------- Shortcut actions -----------------------------------------------
   
@@ -111,7 +123,7 @@ public class Functions {
   
   /*
    * Assigns shortcut to the component globally within the parent window
-   * The command is taken from the setShortcuts()
+   * The command is taken from the setShortcuts() .put() calls
    */
   public void addShortcut(JComponent comp, String comm){
     KeyStroke stroke;
@@ -124,20 +136,6 @@ public class Functions {
     inputMap = comp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
     inputMap.put(stroke, comm);
     comp.getActionMap().put(comm, action);
-  }
-  
-  /*
-   * Formats path, fixes backslashes, trims and removes last slash
-   */
-  public static String formatPath(String path) {
-    path=path.replace('\\', '/');
-    path=path.trim();
-    
-    int last=path.length()-1;
-    if(path.substring(last).equals("/"))
-      path=path.substring(0,last);
-    
-    return path;
   }
   
   /*
@@ -239,6 +237,20 @@ public class Functions {
   }
   
   /*
+   * Formats path, fixes backslashes, trims and removes last slash
+   */
+  public static String formatPath(String path) {
+    path=path.replace('\\', '/');
+    path=path.trim();
+    
+    int last=path.length()-1;
+    if(path.substring(last).equals("/"))
+      path=path.substring(0,last);
+    
+    return path;
+  }
+  
+  /*
    * Sets small and large icons for the window
    */
   public static void setWindowIcon(JFrame frame){
@@ -283,6 +295,119 @@ public class Functions {
       result=mat.group(group);
     
     return result;
+  }
+  
+  /*
+   * Formats time value according to the format
+   */
+  public static String formatTime(int time, String format){
+    Formatter timeFormat=new Formatter();
+    timeFormat.format(format, (float) time/1000);
+    return timeFormat.toString();
+  }
+  
+  /*
+   * Converts string to UTF-8 encoding
+   */
+  public static String fixEncoding(String value){
+    String fix=value;
+    try {
+      fix = new String(value.getBytes("UTF-8"));
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+    return fix;
+  }
+  
+  /*
+   * Writes the text to the file
+   * filename contains extension
+   */
+  public static void writeFile(String filename, String text) {
+    File file;
+    PrintWriter writer;
+    
+    try {
+      file = new File(filename);
+      file.createNewFile();
+
+      writer = new PrintWriter(filename);
+      writer.print(text);
+      writer.close();
+    } catch (Exception e) {
+      System.out.println("error-writing-file: " + e.getMessage());
+    }
+  }
+  
+  /*
+   * Joins array items into a string with separators
+   */
+  public static String join(ArrayList<String> array, String separator) {
+    String res = "";
+    int size=array.size();
+    
+    for(int i=0;i<size;i++){
+      if(i==size-1)
+        separator="";
+      res += array.get(i) + separator;
+    }
+    return res;
+  }
+  
+  /*
+   * Checks if text matches partially to regex
+   */
+  public static boolean matches(String regex, String text) {
+    Pattern pat=Pattern.compile(regex);
+    return pat.matcher(text).find();
+  }
+  
+  /*
+   * Reads JSON file and returns the string
+   */
+  public static String readWholeFile(String path){
+    String res = "";
+    
+    try {
+      Path filePath = Paths.get(path);
+      Charset charset = Charset.forName("UTF-8");
+      
+      byte[] data = Files.readAllBytes(filePath);
+      res=new String(data, charset);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    return res;
+  }
+  
+// ------------------------------------ old ------------------------------------
+  
+  /*
+   * for small files use readWholeFile() instead 
+   * Gets the template for the tree view (jsTree plugin)
+   */
+  public static String readFile(String file) {
+    String doc = "", line = null;
+    BufferedReader br = null;
+
+    try {
+      br = new BufferedReader(new FileReader(file));               // read by lines
+      while ((line = br.readLine()) != null) {
+        doc += line+nl;
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        if (br != null)
+          br.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+
+    return doc;
   }
   
 }
