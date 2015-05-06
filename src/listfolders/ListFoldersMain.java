@@ -196,6 +196,8 @@ public class ListFoldersMain {
     });
     
     bScanDir = new JButton("Scan Directory");
+    bScanDir.setMnemonic('s');
+    bScanDir.setToolTipText("Ctrl+R");
     bScanDir.setActionCommand("scan");
     bScanDir.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {                              // main processing directory action
@@ -215,6 +217,7 @@ public class ListFoldersMain {
     });
     
     bTreeViewer=new JButton("Tree View");
+    bTreeViewer.setMnemonic('v');
     bTreeViewer.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if(treeViewerWindow==null){
@@ -225,6 +228,7 @@ public class ListFoldersMain {
     });
     
     bManageOptions = new JToggleButton("Manage Options");
+    bManageOptions.setMnemonic('m');
     bManageOptions.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED){
@@ -248,6 +252,7 @@ public class ListFoldersMain {
     });
     
     bBrowse=new JButton("Browse...");
+    bBrowse.setToolTipText("Ctrl+O");
     bBrowse.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         String path;
@@ -281,24 +286,32 @@ public class ListFoldersMain {
     pOutputScroll = new JScrollPane();
     
     lPath = new JLabel("Path");
+    lPath.setDisplayedMnemonic('p');
     tfPath = new JTextField();
+    lPath.setLabelFor(tfPath);
     tfPath.setMargin(new Insets(2, 5, 2, 2));
     
   // ===================== Filter Textareas =====================
     
     JLabel lFilterExt = new JLabel("Filter Extensions");
+    lFilterExt.setDisplayedMnemonic('f');
+    lFilterExt.setLabelFor(pFilterExtScroll);
     taFilterExt = new JTextArea();
     taFilterExt.setMargin(new Insets(5, 5, 5, 5));
     taFilterExt.setLineWrap(true);
     taFilterExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
     
     JLabel lExcludeExt = new JLabel("Exclude Extensions");
+    lExcludeExt.setDisplayedMnemonic('e');
+    lExcludeExt.setLabelFor(pExcludeExtScroll);
     taExcludeExt = new JTextArea();
     taExcludeExt.setLineWrap(true);
     taExcludeExt.setMargin(new Insets(5, 5, 5, 5));
     taExcludeExt.setFont(new Font("Monospaced", Font.PLAIN, 12));
     
     JLabel lFilterDir = new JLabel("Filter Directories");
+    lFilterDir.setDisplayedMnemonic('d');
+    lFilterDir.setLabelFor(pFilterDirScroll);
     taFilterDir = new JTextArea();
     taFilterDir.setLineWrap(true);
     taFilterDir.setMargin(new Insets(5, 5, 5, 5));
@@ -308,29 +321,33 @@ public class ListFoldersMain {
     
     JLabel lExportOptions = new JLabel("Export Options");
     chExportText = new JCheckBox("Export Text");
+    chExportText.setMnemonic('x');
     chExportText.setMargin(new Insets(0, 0, 10, 0));
     chExportText.setIconTextGap(5);
     chExportText.setHorizontalAlignment(SwingConstants.LEFT);
     
     chExportMarkup = new JCheckBox("Export Markup");
+    chExportMarkup.setMnemonic('m');
     chExportMarkup.setMargin(new Insets(0, 0, 10, 0));
     chExportMarkup.setIconTextGap(5);
     chExportMarkup.setHorizontalAlignment(SwingConstants.LEFT);
     
     chExportTree = new JCheckBox("Export Tree");
+    chExportTree.setMnemonic('t');
     chExportTree.setMargin(new Insets(0, 0, 10, 0));
     chExportTree.setIconTextGap(5);
     chExportTree.setHorizontalAlignment(SwingConstants.LEFT);
     
     JLabel lExportName = new JLabel("Export Name");
+    lExportName.setDisplayedMnemonic('n');
     tfExportName = new JTextField();
+    lExportName.setLabelFor(tfExportName);
     tfExportName.setMargin(new Insets(2, 5, 2, 2));
     tfExportName.setPreferredSize(new Dimension(150, 20));
     
   // ===================== Output Textarea and Status bar =====================
     
     taOutput = new JTextArea();
-    taOutput.setLineWrap(true);
     taOutput.setMargin(new Insets(5, 5, 5, 5));
     taOutput.setFont(new Font("Monospaced", Font.PLAIN, 12));
     

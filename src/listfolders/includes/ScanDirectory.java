@@ -2,6 +2,12 @@ package listfolders.includes;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,6 +79,10 @@ public class ScanDirectory {
     "mov", "mp4", "mpg", "mpeg", "3gp",
   };
   
+  String[] codeExts ={
+    "c", "cpp", "cs", "java",
+  };
+  
 // ----------------------------------- Scan worker class ----------------------------------- 
   
   class ScanWorker extends SwingWorker<Void, Integer> implements PropertyChangeListener{
@@ -82,6 +92,7 @@ public class ScanDirectory {
      */
     public Void doInBackground() {
       setProgress(0);
+      Functions.clearLog();
       prevTime=System.currentTimeMillis();
       window.bScanDir.setText("Stop");
       window.bScanDir.setActionCommand("stop");
@@ -106,8 +117,12 @@ public class ScanDirectory {
       
       window.progressBar.setValue(100);
       
-      if(text.length()==0 && doExportText) text="No Data!";
-      window.taOutput.setText(text);
+      if(text.length()==0 && doExportText) 
+        log("No Data!");
+      
+      log(nl+"----------------------------"+nl);
+      String time=Functions.formatTime(totalTime, "(time: %.2f s)");
+      log("Total time: "+time+nl);
       
       if(scanCanceled){
         window.progressBar.setValue(0);
@@ -146,8 +161,13 @@ public class ScanDirectory {
       String pad;
 
       json = new ArrayList<TreeNode>();                               // json is recursive tree structure needed for the jsTree plugin
-
+      
       data = dir.listFiles();                                             // get string list of files in the current level directory
+      
+      if(data==null){
+        data=readFromDirStream(dir);
+      }
+      
       if(level==0)
         list = prepareInitialData(data);
       else
@@ -222,6 +242,9 @@ public class ScanDirectory {
       
       totalTime+=time;
       
+      log(currentDir+spaces+"\t "+timeString);
+      log("\t Dir: "+dirCount+"/"+rootDirCount+" \t progress: "+progress+"% \n");
+      
       System.out.print(currentDir+spaces+"\t "+timeString);
       System.out.println("\t Dir: "+dirCount+"/"+rootDirCount+" \t progress: "+progress+"%");
     }
@@ -290,6 +313,30 @@ public class ScanDirectory {
   }
   
   // --------------------------------------------------- helpers ---------------------------------------------------
+  
+  /*
+   * Gets filelist using nio.DirectoryStream
+   * Used in case File.listFiles returns null
+   */
+  private File[] readFromDirStream(File path){
+    log("  Using DirectoryStream for: \""+path+"\"\n");
+    
+    Path dir = path.toPath();
+    ArrayList<File> list=new ArrayList<File>();
+    File[] fileList;
+
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
+      for (Path file: stream) {
+        list.add(new File(file.toString()));
+      }
+    } catch (IOException | DirectoryIteratorException e) {
+      log("Exception::"+e.getCause().toString()+"\n");
+    }
+    
+    fileList=new File[list.size()];
+    fileList=list.toArray(fileList);
+    return fileList;
+  }
   
   /*
    * Filters files and folders
@@ -433,7 +480,21 @@ public class ScanDirectory {
       }
     }
     
+    if(useDefault){
+      for(String item : codeExts){
+        if(item.equals(ext)){
+          icon=path+"code"+iconExt;
+          useDefault=false;
+          break;
+        }
+      }
+    }
+    
     return icon;
+  }
+  
+  private void log(String text){
+    Functions.log(text);
   }
   
 // --------------------------------------------------- filters ---------------------------------------------------

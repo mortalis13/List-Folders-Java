@@ -1,0 +1,792 @@
+[Amorphis]
+  [1993 - The Karelian Isthmus]
+    01 - Karelia.mp3
+    02 - The Gathering.mp3
+    03 - Grail's Mysteries.mp3
+    04 - Warriors Trail.mp3
+    05 - Black Embrace.mp3
+    06 - Exile Of The Sons Of Uisliu.mp3
+    07 - The Lost Name Of God.mp3
+    08 - The Pilgrimage.mp3
+    09 - Misery Path.mp3
+    10 - Sign From The North Side.mp3
+    11 - Vulgar Necrolatry.mp3
+  [1994 - Tales From The Thousand Lakes]
+    01 - Thousand Lakes.mp3
+    02 - Into Hiding.mp3
+    03 - The Castaway.mp3
+    04 - First Doom.mp3
+    05 - Black Winter Day.mp3
+    06 - Drowned Maid.mp3
+    07 - In the Beginning.mp3
+    08 - Forgotten Sunrise.mp3
+    09 - To Father's Cabin.mp3
+    10 - Magic and Mayhem.mp3
+    11 - Folk of the North.mp3
+    12 - Moon and Sun.mp3
+    13 - Moon and Sun, Part II North's Son.mp3
+    14 - Light My Fire.mp3
+  [1996 - Elegy]
+    01 Better Unborn.mp3
+    02 Against Widows.mp3
+    03 The Orphan.mp3
+    04 On Rich and Poor.mp3
+    05 My Kantele.mp3
+    06 Cares.mp3
+    07 Song of the Troubled One.mp3
+    08 Weeper on the Shore.mp3
+    09 Elegy.mp3
+    10 Relief.mp3
+    11 My Kantele (acoustic reprise).mp3
+  [1999 - Tuonela]
+    01 The Way.mp3
+    02 Morning Star.mp3
+    03 Nightfall.mp3
+    04 Tuonela.mp3
+    05 Greed.mp3
+    06 Divinity.mp3
+    07 Shining.mp3
+    08 Withered....mp3
+    09 Rusty Moon.mp3
+    10 Summer's End.mp3
+  [2001 - Am Universum]
+    01 Alone.mp3
+    02 Goddess (Of The Sad Man).mp3
+    03 The Night Is Over.mp3
+    04 Shatters Within.mp3
+    05 Crimson Wave.mp3
+    06 Drifting Memories.mp3
+    07 Forever More.mp3
+    08 Veil Of Sin.mp3
+    09 Captured State.mp3
+    10 Grieve Stricken Heart.mp3
+  [2003 - Far From The Sun]
+    01 Day of Your Beliefs.mp3
+    02 Planetary Misfortune.mp3
+    03 Evil Inside.mp3
+    04 Mourning Soul.mp3
+    05 Far From the Sun.mp3
+    06 Ethereal Solitude.mp3
+    07 Killing Goodness.mp3
+    08 God of Deception.mp3
+    09 Higher Ground.mp3
+    10 Smithereens.mp3
+  [2006 - Eclipse]
+    01 Two Moons.mp3
+    02 House of Sleep.mp3
+    03 Leaves Scar.mp3
+    04 Born From Fire.mp3
+    05 Under a Soil and Black Stone.mp3
+    06 Perkele (The God of Fire).mp3
+    07 The Smoke.mp3
+    08 Same Flesh.mp3
+    09 Brother Moon.mp3
+    10 Empty Opening.mp3
+    11 Stone Woman.mp3
+  [2007 - Silent Waters]
+    01-Weaving The Incantation.mp3
+    02-A Servant.mp3
+    03-Silent Waters.mp3
+    04-Towards And Against.mp3
+    05-I Of Crimson Blood.mp3
+    06-Her Alone.mp3
+    07-Enigma.mp3
+    08-Shaman.mp3
+    09-The White Swan.mp3
+    10-Black River.mp3
+    11-Sign.mp3
+  [2009 - Skyforger]
+    01. Sampo.mp3
+    02. Silver Bride.mp3
+    03. From The Heaven of My Heart.mp3
+    04. Sky Is Mine.mp3
+    05. Majestic Beast.mp3
+    06. My Sun.mp3
+    07. Highest Star.mp3
+    08. Skyforger.mp3
+    09. Course of Fate.mp3
+    10. From Earth I Rose.mp3
+    11. Godlike Machine.mp3
+  [2011 - The Beginning of Times]
+    01 - Battle For Light.mp3
+    02 - Mermaid.mp3
+    03 - My Enemy.mp3
+    04 - You I Need.mp3
+    05 - Song Of The Sage.mp3
+    06 - Three Words.mp3
+    07 - Reformation.mp3
+    08 - Soothsayer.mp3
+    09 - On A Stranded Shore.mp3
+    10 - Escape.mp3
+    11 - Crack In A Stone.mp3
+    12 - Beginning Of The Time.mp3
+    13 - Heart's Song.mp3
+[Celtic]
+  [01-Alan Stivell - Chemins De Terre (1973)]
+    01-An Dro Nevez.mp3
+  [03-Alan Stivell - Again (1993)]
+    03-Ian Morrisson Reel.mp3
+  [15-John Whelan - Flirting With the Edge (1998)]
+    02-The Heather in Winter.mp3
+  [18-Ronan Hardiman - Michael Flatley's Lord Of The Dance (1996)]
+    01-Warriors.mp3
+    02-Gypsy.mp3
+    05-Siamsa.mp3
+    10-Duelling Violins.mp3
+    12-Dance Above The Rainbow.mp3
+  [26-David Arkenstone - The Celtic Book of Days (1998)]
+    07-The Quest of Culhruch.mp3
+  [31-Various - Celtic Twilight Vol. 5 - Hearts of Space (1999)]
+    01-Micheal Danna & Jeff Danna - The Blood of Cu Chulainn.mp3
+  Aoife Clancy - Mantle Of Green.mp3
+  Celtic Dreams - Night Ride Across The Cavcasus.mp3
+  Celtic Dreams - Warriors.mp3
+  Scotland The Brave.mp3
+[El Sueño de Morfeo]
+  [2007 Nos Vemos En El Camino]
+    01 - Nos Vemos En El Camino.mp3
+    02 - Nada Es Suficiente.mp3
+    03 - Un Tunel Entre Tu y Yo.mp3
+    04 - Para Toda La Vida.mp3
+    05 - Chocar.mp3
+    06 - Demasiado Tarde.mp3
+    07 - En Un Rincon.mp3
+    08 - Ciudades Perdidas.mp3
+    09 - Enterate Ya.mp3
+    10 - No Me Dejes.mp3
+    11 - Dentro De Ti.mp3
+    12 - Mi Columna De Opinion.mp3
+    13 - Capitulo II.mp3
+    14 - Sonrisa Especial (Bonus Track).mp3
+    15 - Planeta Particular.mp3
+    2007 back.jpg
+    2007 front.jpg
+    ElSuenoDeMorfeo.jpg
+[Iron Maiden]
+  [1980 Iron Maiden]
+    01. Prowler.mp3
+    02. Remember Tomorrow.mp3
+    03. Running Free.mp3
+    04. Phantom Of The Opera.mp3
+    05. Transylvania.mp3
+    06. Strange World.mp3
+    07. Charlotte The Harlot.mp3
+    08. Iron Maiden.mp3
+  [1981 Killers]
+    01. The Ides Of March.mp3
+    02. Wrathchild.mp3
+    03. Murders In The Rue Morgue.mp3
+    04. Another Life.mp3
+    05. Genghis Khan.mp3
+    06. Innocent Exile.mp3
+    07. Killers.mp3
+    08. Prodigal Son.mp3
+    09. Purgatory.mp3
+    10. Drifter.mp3
+    10.mp3
+  [1982 The Number of The Beast]
+    01. Invaders.mp3
+    02. Children Of The Damned.mp3
+    03. The Prisoner.mp3
+    04. 22 Acacia Avenue.mp3
+    05. The Number Of The Beast.mp3
+    06. Run To The Hills.mp3
+    07. Gangland.mp3
+    08. Hallowed Be Thy Name.mp3
+  [1983 Piece Of Mind]
+    01. Where Eagles Dare.mp3
+    02. Revelations.mp3
+    03. Flight Of Icarus.mp3
+    04. Die With Your Boots On.mp3
+    05. The Trooper.mp3
+    06. Still Life.mp3
+    07. Quest For Fire.mp3
+    08. Sun And Steel.mp3
+    09. To Tame A Land.mp3
+  [1984 Powerslave]
+    01. Aces High.mp3
+    02. 2 Minutes To Midnight.mp3
+    03. Losfer Words (Big 'Orra).mp3
+    04. Flash Of The Blade.mp3
+    05. The Duellists.mp3
+    06. Back In The Village.mp3
+    07. Powerslave.mp3
+    08. Rime Of The Ancient Mariner.mp3
+  [1986 Somewhere in Time]
+    01. Caught Somewhere In Time.mp3
+    02. Wasted Years.mp3
+    03. Sea Of Madness.mp3
+    04. Heaven Can Wait.mp3
+    05. The Loneliness Of The Long Distance Runner.mp3
+    06. Stranger In A Strange Land.mp3
+    07. Deja-Vu.mp3
+    08. Alexander The Great (356-323 B.C.).mp3
+  [1988 Seventh Son Of A Seventh Son]
+    01. Moonchild.mp3
+    02. Infinite Dreams.mp3
+    03. Can I Play With Madness.mp3
+    04. The Evil That Men Do.mp3
+    05. Seventh Son Of A Seventh Son.mp3
+    06. The Prophecy.mp3
+    07. The Clairvoyant.mp3
+    08. Only The Good Die Young.mp3
+  [1990 No Prayer For The Dying]
+    01. Tailgunner.mp3
+    02. Holy Smoke.mp3
+    03. No Prayer For The Dying.mp3
+    04. Public Enema Number One.mp3
+    05. Fates Warning.mp3
+    06. The Assassin.mp3
+    07. Run Silent Run Deep.mp3
+    08. Hooks In You.mp3
+    09. Bring Your Daughter... To The Slaughter.mp3
+    10. Mother Russia.mp3
+  [1992 Fear of the Dark]
+    01-Be Quick or be Dead.mp3
+    02-From Here to Eternity.mp3
+    03-Afraid to Shoot Strangers.mp3
+    04-Fear is the Key.mp3
+    05-Childhood's End.mp3
+    06-Wasting Love.mp3
+    07-The Fugitive.mp3
+    08-Chains of Misery.mp3
+    09-The Apparition.mp3
+    10-Judas Be My Guide.mp3
+    11-Weekend Warrior.mp3
+    12-Fear of the Dark.mp3
+  [1995 The X Factor]
+    01-Sign of the Cross.mp3
+    02-Lord of the Flies.mp3
+    03-Man on the Edge.mp3
+    04-Fortunes of War.mp3
+    05-Look for the Truth.mp3
+    06-The Aftermath.mp3
+    07-Judgement of Heaven.mp3
+    08-Blood on the Worlds Hands.mp3
+    09-The Edge of Darkness.mp3
+    10-2 A.M..mp3
+    11-The Unbeliever.mp3
+  [1998 Virtual XI]
+    #dummy.mp3
+    01.mp3
+    02.mp3
+    03.mp3
+    04.mp3
+    05.mp3
+    06.mp3
+    07.mp3
+    08.mp3
+  [2000 Brave New World]
+    01.mp3
+    02.mp3
+    03.mp3
+    04.mp3
+    05.mp3
+    06.mp3
+    07.mp3
+    08.mp3
+    09.mp3
+    10 --------.mp3
+  [2003 Dance of Death]
+    01. Wildest Dreams.mp3
+    02. Rainmaker.mp3
+    03. No More Lies.mp3
+    04. Montesegur.mp3
+    05. Dance Of Death.mp3
+    06. Gates Of Tomorrow.mp3
+    07. New Frontier.mp3
+    08. Paschendale.mp3
+    09. Face In The Sand.mp3
+    10. Age Of Innocence.mp3
+    11. Journeyman.mp3
+  [2006 A Matter Of Life And Death]
+    01. Different World.mp3
+    02. These Colours Don't Run.mp3
+    03. Brighter Than A Thousand Suns.mp3
+    04. The Pilgrim.mp3
+    05. The Longest Day.mp3
+    06. Out Of The Shadows.mp3
+    07. The Reincarnation Of Benjamin Breeg.mp3
+    08. For The Greater Good Of God.mp3
+    09. Lord Of Light.mp3
+    10. The Legacy.mp3
+  [2010 The Final Frontier]
+    01 Satellite 15... The Final Frontier.mp3
+    02 El Dorado.mp3
+    03 Mother Of Mercy.mp3
+    04 Coming Home.mp3
+    05 The Alchemist.mp3
+    06 Isle Of Avalon.mp3
+    07 Starblind.mp3
+    08 The Talisman.mp3
+    09 The Man Who Would Be King.mp3
+    10 When The Wild Wind Blows.mp3
+  [Tributos]
+    [The piano tribute to Iron maiden]
+      01 - Two Minutes to Midnight.mp3
+      02 - Wasted Years.mp3
+      03 - Can I Play With Madness.mp3
+      04 - The Trooper.mp3
+      05 - Brave New World.mp3
+      06 - Run to the Hills.mp3
+      07 - Caught Somewhere in Time.mp3
+      08 - Aces High.mp3
+      09 - Hallowed Be Thy Name.mp3
+      10 - Flight of Icarus.mp3
+      11 - The Number of the Beast.mp3
+      12 - Eddie's Lament.mp3
+  [Vivo]
+    [1993 Live at Donnington (CD1)]
+      01.mp3
+      02.mp3
+      03.mp3
+      04.mp3
+      05.mp3
+      06.mp3
+      07.mp3
+      08.mp3
+      09.mp3
+      10.mp3
+      11.mp3
+      12.mp3
+      13.mp3
+      14.mp3
+      cover.JPG
+    [1993 Live at Donnington (CD2)]
+      01.mp3
+      02.mp3
+      03.mp3
+      04.mp3
+      05.mp3
+      06.mp3
+[Metallica]
+  [Albumes]
+    [2008 - Death Magnetic]
+      001-that_was_just_your_life-fjortiso.mp3
+      002-the_end_of_the_line-fjortiso.mp3
+      003-broken_beat_and_scarred-fjortiso.mp3
+      004-the_day_that_never_comes-fjortiso.mp3
+      005-all_nightmare_long-fjortiso.mp3
+      006-cyanide-fjortiso.mp3
+      007-the_unforgiven_iii-fjortiso.mp3
+      008-the_judas_kiss-fjortiso.mp3
+      009-suicide_and_redemption-fjortiso.mp3
+      010-my_apocalypse-fjortiso.mp3
+    [2008 - Death Magnetic (remastered)]
+      01 - That Was Just Your Life.mp3
+      02 - The End of the Line.mp3
+      03 - Broken, Beat & Scarred.mp3
+      04 - The Day That Never Comes.mp3
+      05 - All Nightmare Long.mp3
+      06 - Cyanide.mp3
+      07 - The Unforgiven III.mp3
+      08 - The Judas Kiss.mp3
+      09 - Suicide & Redemption K.H.mp3
+      10 - My Apocalypse.mp3
+      11 - Suicide & Redemption J.H.mp3
+  [Otro]
+    [2006 - Full Metal Garage - Songs That Drove Metallica]
+      [CD1]
+        01 - Discharge - Free Speech For The Dumb.mp3
+        02 - Diamond Head - It's Electric.mp3
+        03 - Black Sabbath - Sabbra Cadabra.mp3
+        04 - The Misfits - Die Die My Darling.mp3
+        05 - Blue Oyster Cult - Astronomy.mp3
+        06 - Thin Lizzy - Whiskey In The Jar.mp3
+        07 - Discharge - The More I See.mp3
+      [CD2]
+        01 - Diamond Head - Helpless.mp3
+        02 - Holocaust - The Small Hours.mp3
+        03 - Killing Joke - The Wait.mp3
+        04 - Budgie - Crash Course In Brain Surgery.mp3
+        05 - Diamond Head - Am I Evil.mp3
+        06 - Blitzkrieg - Blitzkrieg.mp3
+        07 - Budgie - Breadfan.mp3
+        08 - Diamond Head - The Prince.mp3
+        09 - Sweet Savage - Killing Time ['96 Version].mp3
+        10 - Motorhead - Overkill.mp3
+        11 - Motorhead - Too Late, Too Late.mp3
+        12 - Savage - Let It Loose.mp3
+        13 - Diamond Head - Sucking My Love.mp3
+      [CD3]
+        01 - The Kinks - You Really Got Me.mp3
+        02 - The Kinks - All Day And All Of The Night.mp3
+        03 - Bob Seger - Turn The Page.mp3
+        04 - Rare Earth - I Just Want To Celebrate.mp3
+        06 - Nazareth - Please Don't Judas Me.mp3
+        07 - Garbage - Only Happy When It Rains.mp3
+        08 - Dire Straits - Brothers In Arms.mp3
+        09 - Black Sabbath - Iron Man.mp3
+        10 - Black Sabbath - A National Acrobat.mp3
+        11 - Black Sabbath - Hole In The Sky.mp3
+        12 - Blue Oyster Cult - Veteran Of The Psychic Wars.mp3
+      [CD4]
+        01 - Ramones - We're a happy family.mp3
+        02 - Ramones - Commando.mp3
+        03 - Ramones - 53rd 3rd.mp3
+        04 - Ramones - Today Your Love, Tomorrow The World.mp3
+        05 - Ramones - Cretin Hop.mp3
+        06 - Motorhead - Damage case.mp3
+        07 - Motorhead - Stone Dead Forever.mp3
+        08 - Queen - Stone Cold Crazy.mp3
+        09 - Lynyrd Skynyrd - Tuesday's Gone.mp3
+        10 - Misfits - London Dungeon.mp3
+    [Mission-Metallica]
+      06.18 - Fly on the Wall.mp3
+      06.25 - Fly on the Wall.mp3
+      07.12 - Fly on the Wall.mp3
+      07.2 - Fly on the Wall.mp3
+      07.21 - Fly on the Wall.mp3
+      07.22 - Fly on the Wall.mp3
+      07.29 - Fly on the Wall.mp3
+      07.31 - Fly on the Wall.mp3
+      07.5 - Fly on the Wall.mp3
+      07.7 - Fly on the Wall.mp3
+      07.8 - Fly on the Wall.mp3
+      08.1 [1] - Fly on the Wall.mp3
+      08.1 [2] - Fly on the Wall.mp3
+      08.10 - Fly on the Wall.mp3
+      08.12 [1] - Fly on the Wall.mp3
+      08.12 [2] - Fly on the Wall.mp3
+      08.13 - Fly on the Wall.mp3
+      08.14 - Fly on the Wall.mp3
+      08.15 - Fly on the Wall.mp3
+      08.16 - Fly on the Wall.mp3
+      08.17 - Fly on the Wall.mp3
+      08.19 [1] - Fly on the Wall.mp3
+      08.19 [2] - Fly on the Wall.mp3
+      08.2 [1] - Fly on the Wall.mp3
+      08.2 [2] - Fly on the Wall.mp3
+      08.20 - Fly on the Wall.mp3
+      08.22 [1] - Fly on the Wall.mp3
+      08.22 [2] - Fly on the Wall.mp3
+      08.23 - Fly on the Wall.mp3
+      08.24 - Fly on the Wall.mp3
+      08.25 - Fly on the Wall.mp3
+      08.26 - Fly on the Wall.mp3
+      08.3 - Fly on the Wall.mp3
+      08.5 - Fly on the Wall.mp3
+      08.6 [1] - Fly on the Wall.mp3
+      08.6 [2] - Fly on the Wall.mp3
+      08.7 - Fly on the Wall.mp3
+      08.9 - Fly on the Wall.mp3
+      09.11 - Fly on the Wall.mp3
+      All nightmare long - Rob Trujillos acoustic licks.mp3
+      Experience The New Album.mp3
+      Fly on the Wall - New Riffs.mp3
+      Guitar Preview.mp3
+      Kill 'Em All_ 25 Years Later (Part 1).mp3
+      Kill 'Em All_ 25 Years Later (Part 2).mp3
+      MM1.mp3
+      MM2.mp3
+      New Riff Speculation.mp3
+      Robert Trujillo footage.mp3
+      Shine1.mp3
+      Shine2 (Holy Revolver).mp3
+      Shine3 (Holy Revolver).mp3
+      The latest songs.mp3
+      Weeks 15 & 16 - Cyanide - Estudio de grabacion.mp3
+      Weeks 15 & 16 - Lars Ulrich and Kirk Hammett - Cyanide.mp3
+      Weeks 15 & 16 - That was just your life - In the studio.mp3
+  [Tributos]
+    01. Enter Sandman.mp3
+    03 - Fade to black (Metallica cover) (192 kbps).mp3
+    07. Through The Never.mp3
+    09. Of Wolf And Man.mp3
+  [Vivo]
+    [1983-1986 - Live Concerts]
+      [1983 Metallica ~ Cliff's First Show (1983)]
+        02 - Metallica - The Mechanix.mp3
+        03 - Metallica - Phantom Lord.mp3
+        04 - Metallica - Jump In The Free.mp3
+        05 - Metallica - Motorbreath.mp3
+        06 - Metallica - No Remorse.mp3
+        07 - Metallica - Seek And Destroy.mp3
+        08 - Metallica - Anesthesia Pulling Teeth.mp3
+        09 - Metallica - Whiplash.mp3
+        10 - Metallica - Am I Evil.mp3
+        11 - Metallica - Blitzkrieg.mp3
+        12 - Metallica - Metal Militia.mp3
+        I Disappear (Instrumental).mp3
+      [1983 Metallica ~ Live Agora Ballroom Cleveland (1983)]
+        04 - Metallica - Fight Fire With Fire.mp3
+        05 - Metallica - Ride The Lightning.mp3
+        07 - Metallica - Call Of The Ktulu.mp3
+        08 - Metallica - No Remorse.mp3
+        09 - Metallica - Seek And Destroy.mp3
+        10 - Metallica - Cliffs Bass Solo.mp3
+        13 - Metallica - Kirk Solo.mp3
+        14 - Metallica - Metal Militia.mp3
+      [1985 Metallica ~ Acting Like A Maniac LIVE (1985)]
+        01 - Metallica - Creeping Death.mp3
+        02 - Metallica - Ride The Lightning.mp3
+        03 - Metallica - For Whom The Bell Tolls.mp3
+        04 - Metallica - The Four Horsemen.mp3
+        05 - Metallica - Fade To Black.mp3
+        06 - Metallica - Seek And Destroy.mp3
+        09 - Metallica - Motorbreath.mp3
+      [1986 Metallica ~ Live Arena Building Cape Girardeau (1986)]
+        01 - Metallica - Battery.mp3
+        02 - Metallica - Master Of Puppets.mp3
+        03 - Metallica - For Whom The Bell Tolls.mp3
+        05 - Metallica - Welcome Home.mp3
+        06 - Metallica - The Four Horsemen.mp3
+        07 - Metallica - The Thing That Should Not Be.mp3
+        08 - Metallica - Damage Inc..mp3
+        09 - Metallica - Fade To Black.mp3
+        10 - Metallica - Seek And Destroy.mp3
+        11 - Metallica - Creeping Death.mp3
+    [1997, 2007 - Acoustic Gigs]
+      [1997 Acoustic Metal]
+        01 - Low Man's Lyric.mp3
+        02 - Helpless.mp3
+        03 - The Four Horsemen.mp3
+        04 - Poor Twisted Me.mp3
+        05 - Nothing Else Matters.mp3
+        06 - Creeping Death.mp3
+        07 - Tuesday's Gone.mp3
+      [1997 Live Acoustica in San Francisco (Bridge scool benefit - October )]
+        0. Intro.mp3
+        1. Low Man's Lyric.mp3
+        2. Helpless.mp3
+        3. Tuesday's Gone.mp3
+        4. Poor Twisted Me.mp3
+        5. Fade To Black.mp3
+        6. The Four Horsemen.mp3
+        7. Nothing Else Matters.mp3
+      [2007 Bridge scool benefit.Acoustic Live at Mountainview October]
+        Metallica - All within my hands.mp3
+        Metallica - Brothers in arms.mp3
+        Metallica - Disposable heroes.mp3
+        Metallica - I just want to celebrate.mp3
+        Metallica - Nothing else matters.mp3
+        Metallica - Only happy when it rains.mp3
+        Metallica - Please don't judas me.mp3
+        Metallica - Turn the page.mp3
+        Metallica - Unforgiven.mp3
+        Metallica - Veteran of psychic wars.mp3
+    [1998-11-24 - Garage Inc Live]
+      Track 01.mp3
+      Track 02.mp3
+      Track 03.mp3
+      Track 04.mp3
+      Track 05.mp3
+      Track 06.mp3
+      Track 07.mp3
+      Track 09.mp3
+      Track 10.mp3
+      Track 12.mp3
+      Track 13.mp3
+    [2]
+      [1]
+        01. The Ecstasy Of Gold.wma
+        02. Fight Fire With Fire.wma
+        03. Jam.mp3
+        04. Phantom Lord.wma
+        05. Deep Purple Medley.mp3
+        06. Disposable Heroes.wma
+        07. The Thing That Should Not Be.wma
+        08. Cliff_Solo.wma
+        09. For Whom The Bell Tolls.wma
+        10. Leper Messiah.wma
+        11. Bass Solo.wma
+        12. Harvester Of Sorrow.wma
+        13. To Live Is To Die Jam.wma
+        14. Fade To Black.wma
+        15. Hero Of The Day.mp3
+        16. Prowler.mp3
+      [2]
+        01. The Ecstasy Of Gold.wma
+        02. Fade To Black.wma
+        03. Guitar Solo.mp3
+        04. Damage Inc.wma
+        05. Cliff Burton Bass Solo.wma
+        06. For Whom The Bell Tolls.wma
+        07. Guitar Solo, Kirk Hammet.wma
+        08. The Thing That Should Not Be.wma
+        09. Jason Newsted Bass Solo.mp3
+        10. To Live Is To Die - The Call Of Ktulu.mp3
+        11. Jason's Bass Solo.wma
+        12. Horse.wma
+        13. Bass Solo.wma
+        14. Metal Militia.wma
+        15. Bass Solo.wma
+        16. London Dungeon.mp3
+      [3]
+        01. London Dungeon Jam.wma
+        02. Battery.wma
+        03. Kirk Solo.wma
+        04. Fight Fire With Fire.wma
+        05. Helpless Jam.wma
+        06. Detroit Rock City - 31-12-99.mp3
+        07. Blitzkrieg.wma
+        08. Run To The Hills Jam.wma
+        09. Kirk Hammett plays Jimmy Hendrix.mp3
+        10. Welcome Home (Sanitarium).wma
+        11. Ecstacy Of Gold.wma
+        12. Harvester Of Sorrow.wma
+        13. Prowler Jam.wma
+        14. Eye Of The Beholder.wma
+        15. La Bamba, Run To The Hill, Helpless.mp3
+      [4]
+        01. Helpless Jam.wma
+        02. Jam.mp3
+        03. My Sharona, Blackened.mp3
+        04. Are you gonna go my way, Smell like teen Spirit, Seven Nation Army, Beat It.mp3
+        05. Bass Solo.wma
+        06. Covers.wma
+        07. N.I.B..mp3
+        08. Creeping Death.wma
+        09. La Bamba.mp3
+        10. Master Of Puppets.wma
+        11. Little Wing.mp3
+        12. Jam '85.mp3
+        13. Mistreated.mp3
+        14. Prowler, Run to the Hills.mp3
+        15. Symptom of the Universe.mp3
+      [5]
+        01. Orion Jam.wma
+        02. Bleeding Me.mp3
+        03. King Nothing.mp3
+        04. The Shortest Straw.wma
+        05. 2x4.mp3
+        06. The God That Failed.mp3
+        07. Jason Newsted Bass Solo.wma
+        08. Turn The Page.wma
+        09. Jam.mp3
+        10. Until It Sleeps.mp3
+        11. To Live Is To Die Jam.wma
+        12. The Memory Remains.mp3
+        13. How Many More Times Jam.wma
+        14. Low Mans Lyrics.mp3
+        15. Smoke On The Water - How Many More Times - Black Night Jam.wma
+        16. Devils_Dance.mp3
+        17. Frayed Ends Of Sanity Jam.wma
+        18. Better Than You, Jam.mp3
+        19. Motorbreath.wma
+        20. Intro_Memory_Jam.mp3
+    [2004-06-19 - Live in Zaragoza]
+      [Disc I]
+        01. Blackened.mp3
+        02. Fuel.mp3
+        03. Sad But True.mp3
+        04. Kirk Doodle #1.mp3
+        05. Welcome Home Sanitarium.mp3
+        06. Frantic.mp3
+        07. Holier Than Thou.mp3
+        08. No Leaf Clover.mp3
+        09. St. Anger.mp3
+        10. Creeping Death.mp3
+        11. Jungle Essence.mp3
+        12. Fade To Black.mp3
+        13. Battery.mp3
+      [Disc II]
+        01. Wherever I May Roam.mp3
+        02. Melbourne.mp3
+        03. Nothing Else Matters.mp3
+        04. Master Of Puppets.mp3
+        05. One.mp3
+        06. Enter Sandman.mp3
+        07. Dyers Eve.mp3
+        08. Seek and Destroy.mp3
+    [2006 - Live At Download Festival Donington]
+      07 - metallica - battery.mp3
+      08 - metallica - master of puppets.mp3
+      09 - metallica - the thing that should not be.mp3
+      10 - metallica - kirk solo2.mp3
+      11 - metallica - welcome home sanitarium.mp3
+      12 - metallica - disposable heroes.mp3
+      13 - metallica - leper messiah.mp3
+      14 - metallica - orion.mp3
+      15 - metallica - damage inc.mp3
+    [2008 - BBC Radio One Theatre, London, GBR (09.14)]
+      01. That Was Just Your Life.mp3
+      02. The End Of The Line.mp3
+      03. Until It Sleeps.mp3
+      04. Broken, Beat & Scarred.mp3
+      05. Cyanide.mp3
+      06. Frantic.mp3
+      07. For Whom The Bell Tolls.mp3
+      08. Kirk Solo.mp3
+      09. The Day That Never Comes.mp3
+      10. Master Of Puppets.mp3
+      11. Blackened.mp3
+    [2010 - Live in Madrid]
+      01 Creeping Death.MP3
+      02 For Whom The Bell Tolls.MP3
+      03 Through The Never.mp3
+      04 Disposable Heroes.mp3
+      05 Kirk Solo 1.mp3
+      06 Fade To Black.mp3
+      07 That Was Just Your Life.mp3
+      08 The End Of The Line.mp3
+      09 Sad But True.mp3
+      10 Welcome Home.mp3
+      11 Cyanide.mp3
+      12 One.mp3
+      13 Master Of Puppets.mp3
+      14 Fight Fire With Fire.mp3
+      15 Kirk Solo 2.mp3
+      16 Nothing Else Matters.mp3
+      17 Enter Sandman.mp3
+      18 Encore.mp3
+      19 Am I Evil.mp3
+      20 Phantom Lord.mp3
+      21 Seek And Destroy.mp3
+    [2012.05.26 - Getafe Open Air, Madrid, ESP]
+      01. Hit The Lights.mp3
+      02. Master Of Puppets.mp3
+      03. The Shortest Straw.mp3
+      04. For Whom The Bell Tolls.mp3
+      05. Hell And Back.mp3
+      06. Black Album Intro.mp3
+      07. The Struggle Within.mp3
+      08. My Friend Of Misery.mp3
+      09. The God That Failed.mp3
+      10. Of Wolf And Man.mp3
+      11. Nothing Else Matters.mp3
+      12. Through The Never.mp3
+      13. Don't Tread On Me.mp3
+      14. Wherever I May Roam.mp3
+      15. The Unforgiven.mp3
+      16. Holier Than Thou.mp3
+      17. Sad But True.mp3
+      18. Bass Solo.mp3
+      19. Enter Sandman.mp3
+      20. Battery.mp3
+      21. One.mp3
+      22. Seek And Destroy.mp3
+      Tray.jpg
+[Rammstein]
+  [1995 - Herzeleid]
+    01 - Wollt Ihr Das Bett In Flammen Sehen.mp3
+    02 - Der Meister.mp3
+    03 - Weisses Fleisch.mp3
+    04 - Asche Zu Asche.mp3
+    05 - Seemann.mp3
+    06 - Du Riechst So Gut.mp3
+    07 - Das Alte Leid.mp3
+    08 - Heirate Mich.mp3
+    09 - Herzeleid.mp3
+    10 - Laichzeit.mp3
+    11 - Rammstein.mp3
+  [1998 - Sehnsucht]
+    01 - Sehnsucht.mp3
+    02 - Engel.mp3
+    03 - Tier.mp3
+    04 - Bestrafe Mich.mp3
+    05 - Du Hast.mp3
+    06 - Bueck Dich.mp3
+    07 - Spiel Mit Mir.mp3
+    08 - Klavier.mp3
+    09 - Alter Mann.mp3
+    10 - Eifersucht.mp3
+    11 - Kuess Mich (Fellfrosch).mp3
+    12 - Engel (English Version).mp3
+    13 - Du Hast (English Version).mp3
+  [2001 - Mutter]
+    01 Mein Herz Brennt.mp3
+    02 Links 2 3 4.mp3
+    03 Sonne.mp3
+    04 Ich Will.mp3
+    05 Feuer Frei!.mp3

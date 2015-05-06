@@ -1,4 +1,0 @@
-
-- Json format with Gson
-- Switch to first option when current item is removed (Manage Options) 
-- Think about ObjectStreams (write binary objects to file instead of character) (Serialization - Schildt, Oracle)

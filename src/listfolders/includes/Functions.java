@@ -27,6 +27,7 @@ import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
 import listfolders.ListFoldersMain;
@@ -35,7 +36,7 @@ import com.google.gson.Gson;
 
 public class Functions {
   
-  public ListFoldersMain window;
+  public static ListFoldersMain window;
   public Database db;
   
   static final String nl="\n";
@@ -379,6 +380,23 @@ public class Functions {
     }
     
     return res;
+  }
+  
+  /*
+   * Outputs additional information to the Output textarea
+   */
+  public static void log(String text){
+    JTextArea out=window.taOutput;
+    String prev=out.getText();
+    out.setText(prev+text);
+  }
+  
+  /*
+   * Clears the log textarea
+   */
+  public static void clearLog(){
+    JTextArea out=window.taOutput;
+    out.setText("");
   }
   
 // ------------------------------------ old ------------------------------------
