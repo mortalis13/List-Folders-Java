@@ -1,5 +1,7 @@
 # List Folders
 
+[![Download List Folders](https://sourceforge.net/sflogo.php?type=11&group_id=2452708)](https://sourceforge.net/projects/listfolders/files/Java)
+
 Main features:
 
 - List files and subfolders of a selected directory
@@ -32,7 +34,7 @@ Additional **Export name** field allows set different name for exported files. B
 
 # Install & Run
 
-1. Run the **List Folders.exe** installer and pass all steps.
+1. Run the **List Folders.exe** installer and pass all steps ([installer on SourceForge](https://sourceforge.net/projects/listfolders/files/Java/)).
 2. The **Desktop** and **Start Menu** *shortcuts* should be created.
 3. Start the **MySQL** server if needed.
 4. Start the program with the shortcut or using the **List Folders.exe** or **List Folders.jar** file from the installed directory.
@@ -78,6 +80,13 @@ Additional **Export name** field allows set different name for exported files. B
 - *Esc* - Exit **Main window** / **Manage Options** dialog / **Tree Viewer**
 - *Ctrl+R* - Scan directory
 - *Ctrl+O* - Browse for directory in the **Main window** / browse for JSON file in the **Tree Viewer**
+
+
+## Screenshots
+
+![main-prog](/files/main-prog.png)
+![manage-options](/files/manage-options.png)
+![tree-viewer](/files/tree-viewer.png)
 
 
 ## Changelog
